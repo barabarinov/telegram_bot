@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Date
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, FLOAT
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -60,7 +60,7 @@ class Purchase(Base):
     group = relationship('Group', back_populates="purchases")
 
     description = Column(String(64), nullable=False)
-    spent_money = Column(Integer, nullable=False)
+    spent_money = Column(FLOAT, nullable=False)
     creation_date = Column(DateTime, nullable=False, default=DateTime.datetime.now)
 
     def __repr__(self):
@@ -78,8 +78,8 @@ class Income(Base):
     group = relationship('Group', back_populates="incomes")
 
     description = Column(String(64), nullable=False)
-    earned_money = Column(Integer, nullable=False)
+    earned_money = Column(FLOAT, nullable=False)
     # заработанные деньги
 
     def __repr__(self):
-        return  f'Income #{self.id}: {self.description[:20]}'
+        return f'Income #{self.id}: {self.description[:20]}'
