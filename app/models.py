@@ -60,6 +60,7 @@ class Purchase(Base):
     group = relationship('Group', back_populates="purchases")
 
     description = Column(String(64), nullable=False)
+    spent_money = Column(Integer, nullable=False)
     creation_date = Column(DateTime, nullable=False, default=DateTime.datetime.now)
 
     def __repr__(self):
