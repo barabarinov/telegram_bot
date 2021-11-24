@@ -27,12 +27,12 @@ from models import User, Group, Purchase
 if __name__ == '__main__':
     engine = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
 
-    User.metadata.drop_all(engine)
-    Group.metadata.drop_all(engine)
-    Purchase.metadata.drop_all(engine)
+    # User.metadata.drop_all(engine)
+    # Group.metadata.drop_all(engine)
+    # Purchase.metadata.drop_all(engine)
 
-    User.metadata.create_all(engine)
-    Group.metadata.create_all(engine)
-    Purchase.metadata.create_all(engine)
+    # User.metadata.create_all(engine)
+    # Group.metadata.create_all(engine)
+    # Purchase.metadata.create_all(engine)
 
     Session = sessionmaker(engine)

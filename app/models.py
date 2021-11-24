@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, FLOAT
 from sqlalchemy.orm import declarative_base, relationship
+from datetime import datetime
+
 
 Base = declarative_base()
 
@@ -11,7 +13,7 @@ class User(Base):
     username = Column(String, nullable=True)
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
-    monthly_report = Column(Boolean, default=True)
+    enable_monthly_report = Column(Boolean, default=True)
 
     purchases = relationship(
         "Purchase", back_populates="user",
@@ -59,12 +61,12 @@ class Purchase(Base):
     group_id = Column(Integer, ForeignKey('groups.id', ondelete='SET NULL'), nullable=True)
     group = relationship('Group', back_populates="purchases")
 
-    description = Column(String(64), nullable=False)
+    title = Column(String(64), nullable=False)
     spent_money = Column(FLOAT, nullable=False)
-    creation_date = Column(DateTime, nullable=False, default=DateTime.datetime.now)
+    creation_date = Column(DateTime, nullable=False, default=datetime.now)
 
     def __repr__(self):
-        return f'Purchase #{self.id}: {self.description[:20]}'
+        return f'Purchase #{self.id}: {self.title[:20]}'
 
 
 class Income(Base):
@@ -77,9 +79,9 @@ class Income(Base):
     group_id = Column(Integer, ForeignKey('groups.id', ondelete='SET NULL'), nullable=True)
     group = relationship('Group', back_populates="incomes")
 
-    description = Column(String(64), nullable=False)
+    title = Column(String(64), nullable=False)
     earned_money = Column(FLOAT, nullable=False)
     # заработанные деньги
 
     def __repr__(self):
-        return f'Income #{self.id}: {self.description[:20]}'
+        return f'Income #{self.id}: {self.title[:20]}'
