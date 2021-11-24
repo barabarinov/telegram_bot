@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from telegram import Update
+from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters
 from telegram.ext import Updater
 from enum import auto, IntEnum
@@ -67,39 +67,20 @@ def start(update: Update, context: CallbackContext):
             )
 
 
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
-        states={
-            CHOOSING: [
-                MessageHandler(
-                    Filters.regex('^(I have spent|I made|Statistics)$'), regular_choice
-                ),
-                MessageHandler(Filters.regex('^Something else...$'), custom_choice),
-            ],
-            TYPING_CHOICE: [
-                MessageHandler(
-                    Filters.text & ~(Filters.command | Filters.regex('^Done$')), regular_choice
-                )
-            ],
-            TYPING_REPLY: [
-                MessageHandler(
-                    Filters.text & ~(Filters.command | Filters.regex('^Done$')),
-                    received_information,
-                )
-            ],
-        },
-        fallbacks=[MessageHandler(Filters.regex('^Done$'), done)],
-    )
+def new_purchase(update: Update, context: CallbackContext):
+    reply_keyboard = [['/cancel']]
+    update.message.reply_text('Enter your purchase title:', reply_markup=ReplyKeyboardMarkup(
+        reply_keyboard, one_time_keyboard=True,
+    ))
 
-    dispatcher.add_handler(conv_handler)
+    return NewPurchase.TITLE
 
-    # Start the Bot
-    updater.start_polling()
+def get_purchase_title(update: Update, context: CallbackContext):
+    context.user_data['title'] = update.message.text
 
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
+    reply_keyboard = [['/skip', '/cancel']]
+
+    update.message.reply_text('Enter ')
 
 
 if __name__ == '__main__':
