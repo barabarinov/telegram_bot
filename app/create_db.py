@@ -22,7 +22,7 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import User, Group, Purchase
+from models import User, Group, Purchase, Income
 
 if __name__ == '__main__':
     engine = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
@@ -30,9 +30,11 @@ if __name__ == '__main__':
     # User.metadata.drop_all(engine)
     # Group.metadata.drop_all(engine)
     # Purchase.metadata.drop_all(engine)
+    # Income.metadata.drop_all(engine)
 
     # User.metadata.create_all(engine)
     # Group.metadata.create_all(engine)
     # Purchase.metadata.create_all(engine)
+    # Income.metadata.create_all(engine)
 
     Session = sessionmaker(engine)
