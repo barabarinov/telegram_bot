@@ -97,18 +97,7 @@ def get_purchase_spent_money(update: Update, context: CallbackContext):
         context.user_data['spent_money'] = update.message.text
 
     reply_keyboard = [['/skip', '/cancel']]
-    update.message.reply_text('Enter purchase date!', reply_markup=ReplyKeyboardMarkup(
-        reply_keyboard, one_time_keyboard=True,
-    ))
 
-    return NewPurchase.CREATION_DATE
-
-
-def get_purchase_creation_date(update: Update, context: CallbackContext):
-    if update.message.text == '/skip':
-        context.user_data['creation_date'] = None
-    else:
-        context.user_data['creation_date'] = datetime.datetime.now()
 
     purchase = Purchase(
         title=context.user_data['title'],
@@ -149,10 +138,6 @@ new_purchase_conversation_handler = ConversationHandler(
     states={
         NewPurchase.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_purchase_title)],
         NewPurchase.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_purchase_spent_money)],
-        NewPurchase.CREATION_DATE: [
-            MessageHandler(
-                Filters.regex('^\d{2}\/\d{2}\/\d{4}$') | Filters.regex('^/skip$'), get_purchase_creation_date),
-        ],
         NewPurchase.CONFIRM: [
             MessageHandler(Filters.regex('^(YES)$') & ~Filters.command, create_purchase),
             MessageHandler(Filters.regex('^(NO)$') & ~Filters.command, cancel_creation_purchase),
