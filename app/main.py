@@ -4,7 +4,7 @@ import os
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters
 from telegram.ext import Updater, ConversationHandler
@@ -92,7 +92,7 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
     if update.message.text.isdigit():
-        context.user_data['spent_money'] = update.message.text
+        context.user_data['spent_money'] = float(update.message.text)
     else:
         return ConversationHandler.END
 
@@ -103,8 +103,9 @@ def get_purchase_spent_money(update: Update, context: CallbackContext):
         spent_money=context.user_data['spent_money'],
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
-    update.message.reply_text(f'That\'s your purchase!\n{purchase.display()}', reply_markup=ReplyKeyboardMarkup(
-        reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t?'
+    update.message.reply_text(
+        f'That\'s your purchase!\n{purchase.display()}, {purchase.creation_date}', reply_markup=ReplyKeyboardMarkup(
+        reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t save?'
     ))
 
     return NewPurchase.CONFIRM

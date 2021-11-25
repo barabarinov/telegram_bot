@@ -68,6 +68,13 @@ class Purchase(Base):
     def __repr__(self):
         return f'Purchase #{self.id}: {self.title[:20]}'
 
+    def display(self):
+        return (
+            f'Title: {self.title}\n'
+            f'Spent Money: {self.spent_money}\n'
+            f'Creation Date: {self.creation_date}'
+        )
+
 
 class Income(Base):
     __tablename__ = 'incomes'
