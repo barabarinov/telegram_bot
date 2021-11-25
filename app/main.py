@@ -18,7 +18,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.DEBUG,
 )
-
+logger = logging.getLogger(__name__)
 
 class NewPurchase(IntEnum):
     TITLE = auto()
@@ -92,6 +92,8 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
     if update.message.text.isdigit():
+        logger.info(update.message.text)
+        logger.info('**********WHY I CANT SEE THIS????***********')
         context.user_data['spent_money'] = float(update.message.text)
     else:
         return ConversationHandler.END
@@ -104,7 +106,7 @@ def get_purchase_spent_money(update: Update, context: CallbackContext):
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
     update.message.reply_text(
-        f'That\'s your purchase!\n{purchase.display()}, {purchase.creation_date}', reply_markup=ReplyKeyboardMarkup(
+        f'That\'s your purchase!\n{purchase.display()}, {Purchase.creation_date}', reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t save?'
     ))
 
