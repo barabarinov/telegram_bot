@@ -91,22 +91,20 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
-    if update.message.text == '/skip':
-        context.user_data['spent_money'] = None
-    else:
+    if update.message.text.isdigit():
         context.user_data['spent_money'] = update.message.text
+    else:
+        return ConversationHandler.END
 
     reply_keyboard = [['/skip', '/cancel']]
-
 
     purchase = Purchase(
         title=context.user_data['title'],
         spent_money=context.user_data['spent_money'],
-        creation_date=context.user_data['creation_date'],
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
     update.message.reply_text(f'That\'s your purchase!\n{purchase.display()}', reply_markup=ReplyKeyboardMarkup(
-        reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save (Yes/No)?'
+        reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t?'
     ))
 
     return NewPurchase.CONFIRM
@@ -118,7 +116,6 @@ def create_purchase(update: Update, context: CallbackContext):
             user_id=update.effective_user.id,
             title=context.user_data['title'],
             spent_money=context.user_data['spent_money'],
-            creation_date=context.user_data['creation_date'],
         )
         session.add(user_new_purchase)
         session.commit()
@@ -139,8 +136,8 @@ new_purchase_conversation_handler = ConversationHandler(
         NewPurchase.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_purchase_title)],
         NewPurchase.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_purchase_spent_money)],
         NewPurchase.CONFIRM: [
-            MessageHandler(Filters.regex('^(YES)$') & ~Filters.command, create_purchase),
-            MessageHandler(Filters.regex('^(NO)$') & ~Filters.command, cancel_creation_purchase),
+            MessageHandler(Filters.regex('^(SAVE)$') & ~Filters.command, create_purchase),
+            MessageHandler(Filters.regex('^(DON\'T SAVE)$') & ~Filters.command, cancel_creation_purchase),
         ],
     },
     fallbacks=[
