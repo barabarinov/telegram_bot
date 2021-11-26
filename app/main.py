@@ -1,3 +1,4 @@
+from datetime import datetime
 import datetime
 import logging
 import os
@@ -19,6 +20,7 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 logger = logging.getLogger(__name__)
+
 
 class NewPurchase(IntEnum):
     TITLE = auto()
@@ -103,10 +105,11 @@ def get_purchase_spent_money(update: Update, context: CallbackContext):
     purchase = Purchase(
         title=context.user_data['title'],
         spent_money=context.user_data['spent_money'],
+        creation_date=datetime.datetime.strftime(datetime.datetime.now(),"%H:%M %d/%m/%Y"),
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
     update.message.reply_text(
-        f'That\'s your purchase!\n{purchase.display()}, {Purchase.creation_date}', reply_markup=ReplyKeyboardMarkup(
+        f'That\'s your purchase!\n{purchase.display()}', reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t save?'
     ))
 

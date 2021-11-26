@@ -92,3 +92,5 @@ class Income(Base):
 
     def __repr__(self):
         return f'Income #{self.id}: {self.title[:20]}'
+
+
