@@ -1,4 +1,3 @@
-from datetime import datetime
 import datetime
 import logging
 import os
@@ -94,8 +93,6 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
     if update.message.text.isdigit():
-        logger.info(update.message.text)
-        logger.info('**********WHY I CANT SEE THIS????***********')
         context.user_data['spent_money'] = float(update.message.text)
     else:
         return ConversationHandler.END
