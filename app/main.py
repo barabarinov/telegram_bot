@@ -92,7 +92,7 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
-    if update.message.text.isdigit():
+    if update.message.text.replace('.','').isdigit():
         context.user_data['spent_money'] = float(update.message.text)
     else:
         return ConversationHandler.END

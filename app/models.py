@@ -63,7 +63,8 @@ class Purchase(Base):
 
     title = Column(String(64), nullable=False)
     spent_money = Column(FLOAT, nullable=False)
-    creation_date = Column(DateTime, nullable=False, default=datetime.now)
+    creation_date = Column(
+        DateTime, nullable=False, default=datetime.now())
 
     def __repr__(self):
         return f'Purchase #{self.id}: {self.title[:20]}'
@@ -92,5 +93,3 @@ class Income(Base):
 
     def __repr__(self):
         return f'Income #{self.id}: {self.title[:20]}'
-
-
