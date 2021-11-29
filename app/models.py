@@ -45,10 +45,9 @@ class Group(Base):
 
     user = relationship("User", back_populates="groups")
     purchases = relationship("Purchase", back_populates="group")
-    incomes = relationship("Income", back_populates="group")
 
     def __repr__(self):
-        return f'Group {self.name}'
+        return f'Group: {self.name}'
 
 
 class Purchase(Base):
@@ -69,11 +68,12 @@ class Purchase(Base):
     def __repr__(self):
         return f'Purchase #{self.id}: {self.title[:20]}'
 
-    def display(self):
+    def display_purchase(self):
         return (
             f'Title: {self.title}\n'
             f'Spent Money: {self.spent_money}\n'
-            f'Creation Date: {self.creation_date}'
+            f'Group: {self.group.name if self.group else None}\n'
+            f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
         )
 
 
@@ -83,13 +83,17 @@ class Income(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     user = relationship('User', back_populates="incomes")
-
-    group_id = Column(Integer, ForeignKey('groups.id', ondelete='SET NULL'), nullable=True)
-    group = relationship('Group', back_populates="incomes")
-
     title = Column(String(64), nullable=False)
     earned_money = Column(FLOAT, nullable=False)
-    # заработанные деньги
+    creation_date = Column(
+        DateTime, nullable=False, default=datetime.now())
 
     def __repr__(self):
         return f'Income #{self.id}: {self.title[:20]}'
+
+    def display_income(self):
+        return (
+            f'Title: {self.title}\n'
+            f'Earned Money: {self.earned_money}\n'
+            f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
+        )

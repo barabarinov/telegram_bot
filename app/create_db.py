@@ -19,10 +19,15 @@
 # Таблицы:
 # Users, Groups, Purchase, Income
 
-
+import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import User, Group, Purchase, Income
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG,
+)
 
 if __name__ == '__main__':
     engine = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
