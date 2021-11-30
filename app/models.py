@@ -33,13 +33,13 @@ class User(Base):
     )
 
     def __repr__(self):
-        return f'User {self.id} with telegram id: {self.telegram_id}'
+        return f'User with telegram id: {self.telegram_id}'
 
 
 class Group(Base):
     __tablename__ = 'groups'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, unique=True)
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     name = Column(String(32))
 

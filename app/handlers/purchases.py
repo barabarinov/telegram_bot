@@ -6,8 +6,8 @@ from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKe
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
 
-from models import User, Purchase, Group
 from db import Session
+from models import User, Purchase, Group
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +75,6 @@ def get_group_callback(update: Update, context: CallbackContext):
         title=context.user_data['title'],
         spent_money=context.user_data['spent_money'],
         creation_date=datetime.datetime.now(),
-        group_id=group_id,
         group=group,
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
