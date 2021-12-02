@@ -17,4 +17,4 @@ def get_sum_of_all_purchases_categories(update: Update, context: CallbackContext
             logger.info(f'HERE IS GROUP {group}')
             result = sum(purchase.spent_money for purchase in group.purchases)
             logger.info(f'HERE IS RESULT {result}')
-            update.message.(f'Sum of purchase in categorie {group.name}: ₴{result}')
+            update.message.reply_text(f'Sum of purchase in categorie {group.name}: ₴{result}')
