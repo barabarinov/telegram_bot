@@ -9,6 +9,8 @@ from handlers.purchases import new_purchase_conversation_handler
 from handlers.incomes import new_income_conversation_handler
 from handlers.groups import new_group_conversation_handler
 from handlers.registration import register_user_handler
+from handlers.report_of_incomes import get_sum_of_all_incomes
+from handlers.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -24,6 +26,10 @@ def main(token):
     dispatcher.add_handler(new_purchase_conversation_handler)
     dispatcher.add_handler(new_income_conversation_handler)
     dispatcher.add_handler(new_group_conversation_handler)
+    dispatcher.add_handler(CommandHandler('all_incomes',get_sum_of_all_incomes))
+    dispatcher.add_handler(CommandHandler('all_purchases', get_sum_of_all_purchases_categories))
+    # dispatcher.add_handler(new_group_single)
+
 
     updater.start_polling()
     updater.idle()

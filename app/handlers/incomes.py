@@ -81,7 +81,7 @@ def cancel_creation_income(update: Update, context: CallbackContext):
 
 
 new_income_conversation_handler = ConversationHandler(
-    entry_points=[CommandHandler('new_income', new_income)],
+        entry_points=[CommandHandler('new_income', new_income)],
     states={
         NewIncome.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_income_title)],
         NewIncome.EARNED_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_income_earned_money)],

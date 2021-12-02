@@ -45,10 +45,9 @@ def create_group(update: Update, context: CallbackContext):
             user_id=update.effective_user.id,
             name=context.user_data['name'],
         )
-        logger.info(f'***USER*** {user_new_group.user_id}')
         session.add(user_new_group)
         session.commit()
-        logger.info(f'***USER*** {user_new_group.user_id}')
+        session.refresh(user_new_group)
     update.message.reply_text(f'The group \'{user_new_group.name}\' was created!')
 
     return ConversationHandler.END
