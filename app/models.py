@@ -15,6 +15,11 @@ class User(Base):
     last_name = Column(String, nullable=True)
     enable_monthly_report = Column(Boolean, default=True)
 
+    incomes = relationship(
+        "Income", back_populates="user",
+        cascade="all, delete",
+        passive_deletes=True,
+    )
     purchases = relationship(
         "Purchase", back_populates="user",
         cascade="all, delete",
@@ -27,12 +32,6 @@ class User(Base):
     )
     groups_incomes = relationship(
         "GroupIncome", back_populates="user",
-        cascade="all, delete",
-        passive_deletes=True,
-    )
-
-    incomes = relationship(
-        "Income", back_populates="user",
         cascade="all, delete",
         passive_deletes=True,
     )
@@ -76,7 +75,7 @@ class Purchase(Base):
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     user = relationship('User', back_populates="purchases")
 
-    group_id = Column(Integer, ForeignKey('groups_purchases.id', ondelete='SET NULL'), nullable=True)
+    group_id = Column(Integer, ForeignKey('groups_purchases.id', ondelete='SET NULL'), nullable=False)
     group = relationship('GroupPurchase', back_populates="purchases")
 
     title = Column(String(64), nullable=False)
@@ -103,7 +102,7 @@ class Income(Base):
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     user = relationship('User', back_populates="incomes")
 
-    group_id = Column(Integer, ForeignKey('groups_incomes.id', ondelete='SET NULL'), nullable=True)
+    group_id = Column(Integer, ForeignKey('groups_incomes.id', ondelete='SET NULL'), nullable=False)
     group = relationship('GroupIncome', back_populates="incomes")
 
     title = Column(String(64), nullable=False)
