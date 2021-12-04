@@ -4,7 +4,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from db import Session
-from models import User, Group
+from models import User
 
 logger = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler
 
 from db import Session
-from models import Group
+from models import Group_Incomes
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 def new_group_single(update: Update, context: CallbackContext):
     logger.info(f'TEXT IS HERE {update.message.text}')
     with Session() as session:
-        user_new_group = Group(
+        user_new_group = Group_Incomes(
             user_id=update.effective_user.id,
             name=update.message.text.split(' ', maxsplit=1)[1],
         )

@@ -7,7 +7,7 @@ from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filter
 from telegram.ext import ConversationHandler
 
 from db import Session
-from models import User, Purchase, Group
+from models import User, Purchase, GroupPurchase
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 class NewPurchase(IntEnum):
     TITLE = auto()
     SPENT_MONEY = auto()
-    CREATION_DATE = auto()
     CHOOSE_GROUP = auto()
     CONFIRM = auto()
 
@@ -42,12 +41,12 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
-    logger.info(f"SPENT MONEY TEXT: {update.message.text}")
+    # logger.info(f"SPENT MONEY TEXT: {update.message.text}")
     try:
         context.user_data['spent_money'] = float(update.message.text.replace(' ', ''))
     except ValueError:
         return ConversationHandler.END
-    logger.info(f"SPENT MONEY: {context.user_data['spent_money']}")
+    # logger.info(f"SPENT MONEY: {context.user_data['spent_money']}")
 
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
@@ -55,21 +54,22 @@ def get_purchase_spent_money(update: Update, context: CallbackContext):
         update.message.reply_text(
             'Select group',
             reply_markup=InlineKeyboardMarkup.from_column([
-                InlineKeyboardButton(text=group.name, callback_data=f'set-group${group.id}') for group in user.groups
+                InlineKeyboardButton(
+                    text=group.name, callback_data=f'set-purchase-group${group.id}') for group in user.groups_purchases
             ]),
         )
 
     return NewPurchase.CHOOSE_GROUP
 
 
-def get_group_callback(update: Update, context: CallbackContext):
+def get_purchase_group_callback(update: Update, context: CallbackContext):
     update.callback_query.answer()
 
     _, group_id = update.callback_query.data.split('$')
     group_id = int(group_id)
     context.user_data['group_id'] = group_id
     with Session() as session:
-        group = session.query(Group).get(group_id)
+        group = session.query(GroupPurchase).get(group_id)
 
     purchase = Purchase(
         title=context.user_data['title'],
@@ -112,7 +112,7 @@ new_purchase_conversation_handler = ConversationHandler(
     states={
         NewPurchase.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_purchase_title)],
         NewPurchase.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_purchase_spent_money)],
-        NewPurchase.CHOOSE_GROUP: [CallbackQueryHandler(get_group_callback, pattern='^set-group', )],
+        NewPurchase.CHOOSE_GROUP: [CallbackQueryHandler(get_purchase_group_callback, pattern='^set-purchase-group', )],
         NewPurchase.CONFIRM: [
             MessageHandler(Filters.regex('^(SAVE)$') & ~Filters.command, create_purchase),
             MessageHandler(Filters.regex('^(DON\'T SAVE)$') & ~Filters.command, cancel_creation_purchase),
