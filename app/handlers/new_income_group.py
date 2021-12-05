@@ -27,7 +27,7 @@ def new_income_group(update: Update, context: CallbackContext):
 
 def get_new_income_group_name(update: Update, context: CallbackContext):
     context.user_data['name'] = update.message.text
-    logger.info(f'CONTEXT IS HERE {context.user_data["name"]}')
+    logger.info(f'NAME IS HERE {context.user_data["name"]}')
     logger.info(f'CONTEXT = {context}')
 
     reply_keyboard = [['YES', 'NO']]

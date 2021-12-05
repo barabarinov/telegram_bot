@@ -48,7 +48,7 @@ class GroupPurchase(Base):
     name = Column(String(32))
 
     user = relationship("User", back_populates="groups_purchases")
-    purchases = relationship("Purchase", back_populates="groups_purchase")
+    purchases = relationship("Purchase", back_populates="group")
 
     def __repr__(self):
         return f'Group of Purchases: {self.name}'
@@ -62,7 +62,7 @@ class GroupIncome(Base):
     name = Column(String(32))
 
     user = relationship("User", back_populates="groups_incomes")
-    incomes = relationship("Income", back_populates="groups_income")
+    incomes = relationship("Income", back_populates="group")
 
     def __repr__(self):
         return f'Group of Incomes: {self.name}'
