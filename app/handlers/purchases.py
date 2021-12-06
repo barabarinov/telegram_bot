@@ -41,16 +41,13 @@ def get_purchase_title(update: Update, context: CallbackContext):
 
 
 def get_purchase_spent_money(update: Update, context: CallbackContext):
-    # logger.info(f"SPENT MONEY TEXT: {update.message.text}")
     try:
         context.user_data['spent_money'] = float(update.message.text.replace(' ', ''))
     except ValueError:
         return ConversationHandler.END
-    # logger.info(f"SPENT MONEY: {context.user_data['spent_money']}")
 
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
-
         update.message.reply_text(
             'Select group',
             reply_markup=InlineKeyboardMarkup.from_column([

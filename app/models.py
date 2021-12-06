@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, FLOAT
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, FLOAT, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
 
@@ -79,7 +79,7 @@ class Purchase(Base):
     group = relationship('GroupPurchase', back_populates="purchases")
 
     title = Column(String(64), nullable=False)
-    spent_money = Column(FLOAT, nullable=False)
+    spent_money = Column(DECIMAL, nullable=False)
     creation_date = Column(
         DateTime, nullable=False, default=datetime.now())
 
@@ -106,7 +106,7 @@ class Income(Base):
     group = relationship('GroupIncome', back_populates="incomes")
 
     title = Column(String(64), nullable=False)
-    earned_money = Column(FLOAT, nullable=False)
+    earned_money = Column(DECIMAL, nullable=False)
     creation_date = Column(
         DateTime, nullable=False, default=datetime.now())
 
