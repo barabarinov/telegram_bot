@@ -12,7 +12,7 @@ from handlers.incomes import new_income_conversation_handler
 from handlers.new_purchase_group import new_purchase_group_conversation_handler
 from handlers.new_income_group import new_income_group_conversation_handler
 from handlers.registration import register_user_handler
-from handlers.report_of_all_incomes import get_sum_of_all_incomes_categories
+from handlers.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
 from handlers.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
 from handlers.monthly_report import get_monthly_report_of_purchases_incomes
 from models import User
@@ -33,9 +33,9 @@ def monthly_feedback(context: CallbackContext):
 
 def main(token):
     updater = Updater(token=token, use_context=True)
-    j = updater.job_queue
+    # j = updater.job_queue
     # j.run_once(monthly_feedback, 2)
-    j.run_monthly(monthly_feedback, datetime.time(22, 34, 00), 6)
+    # j.run_monthly(monthly_feedback, datetime.time(22, 34, 00), 6)
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', register_user_handler))
