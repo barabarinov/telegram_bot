@@ -30,13 +30,11 @@ class User(Base):
     groups_purchases = relationship(
         "GroupPurchase", back_populates="user",
         cascade="all, delete",
-        lazy='dynamic',
         passive_deletes=True,
     )
     groups_incomes = relationship(
         "GroupIncome", back_populates="user",
         cascade="all, delete",
-        lazy='dynamic',
         passive_deletes=True,
     )
 
@@ -66,7 +64,7 @@ class GroupIncome(Base):
     name = Column(String(32))
 
     user = relationship("User", back_populates="groups_incomes")
-    incomes = relationship("Income", back_populates="group")
+    incomes = relationship("Income", back_populates="group", lazy='dynamic')
 
     def __repr__(self):
         return f'Group of Incomes: {self.name}'

@@ -2,24 +2,34 @@ import datetime
 import logging
 from calendar import monthrange
 from sqlalchemy import and_
+from models import Purchase, Income
 
 logger = logging.getLogger(__name__)
 
 
 def get_monthly_report_of_purchases_incomes(user):
+    logger.info(f'USER IS: {user}')
     now = datetime.datetime.now()
-    _, days_in_month = monthrange(now.year, now.month - 1)
-    start = datetime.datetime(now.year, now.month - 1, 1)
-    end = datetime.datetime(now.year, now.month - 1, days_in_month)
+    _, days_in_previous_month = monthrange(now.year, now.month - 1)
+    # _, days_in_current_month = monthrange(now.year - 1, now.month + 11)
+    if now.month == 1:
+        start = datetime.datetime(now.year - 1, month=12, day=1)
+        end = datetime.datetime(now.year - 1, month=12, day=31)
+    else:
+        start = datetime.datetime(now.year, now.month - 1, 1)
+        end = datetime.datetime(now.year, now.month - 1, days_in_previous_month)
+
     return get_all_purchases_all_incomes_of_month(user, start, end)
 
 
 def get_all_purchases_all_incomes_of_month(user, start, end):
+    logger.info(f'USER START END {user} {start} {end}')
     your_total_purchase = sum(purchase.spent_money for purchase in user.purchases.filter(
-        and_(user.purchases.creation_date >= start, user.purchases.creation_date <= end)))
+        and_(Purchase.creation_date >= start, Purchase.creation_date <= end)))
 
     your_total_income = sum(income.earned_money for income in user.incomes.filter(
-        and_(user.incomes.creation_date >= start, user.incomes.creation_date <= end)))
+        and_(Income.creation_date >= start, Income.creation_date <= end)))
+    logger.info('TIS')
 
-    return f'Your monthly purchase: ₴{your_total_purchase}\n' \
-           f'Your monthly income: ₴{your_total_income}'
+    return f'Your monthly purchase: ₴ {round(your_total_purchase, 2)}\n' \
+           f'Your monthly income: ₴ {round(your_total_income, 2)}'

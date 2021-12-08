@@ -33,9 +33,9 @@ def monthly_feedback(context: CallbackContext):
 
 def main(token):
     updater = Updater(token=token, use_context=True)
-    # j = updater.job_queue
+    j = updater.job_queue
     # j.run_once(monthly_feedback, 2)
-    # j.run_monthly(monthly_feedback, datetime.time(22, 34, 00), 6)
+    j.run_monthly(monthly_feedback, datetime.time(19, 9, 00), 8)
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', register_user_handler))
