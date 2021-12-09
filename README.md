@@ -1,4 +1,7 @@
 #Python Wallet Tracker Telegram bot
+
+---
+
 ##Calculation of expenses and income
 
 ---
