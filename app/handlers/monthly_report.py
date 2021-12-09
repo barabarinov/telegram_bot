@@ -1,17 +1,18 @@
 import datetime
 import logging
 from calendar import monthrange
+
 from sqlalchemy import and_
-from models import Purchase, Income
+
+from app.models import Purchase, Income
 
 logger = logging.getLogger(__name__)
 
 
-def get_monthly_report_of_purchases_incomes(user):
+def get_monthly_report_start_end(user):
     logger.info(f'USER IS: {user}')
     now = datetime.datetime.now()
     _, days_in_previous_month = monthrange(now.year, now.month - 1)
-    # _, days_in_current_month = monthrange(now.year - 1, now.month + 11)
     if now.month == 1:
         start = datetime.datetime(now.year - 1, month=12, day=1)
         end = datetime.datetime(now.year - 1, month=12, day=31)

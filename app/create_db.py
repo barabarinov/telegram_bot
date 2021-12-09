@@ -1,7 +1,7 @@
 import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import User, GroupPurchase, GroupIncome, Purchase, Income
+from app.models import User, GroupPurchase, GroupIncome, Purchase, Income
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

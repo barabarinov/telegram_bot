@@ -1,17 +1,17 @@
 import datetime
 import logging
 
+from sqlalchemy import and_
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from db import Session
-from models import User, Income
-from sqlalchemy import and_
+from app.db import Session
+from app.models import User, Income
 
 logger = logging.getLogger(__name__)
 
 
-def current_report_of_all_incomes():
+def get_start_end_of_current_report_of_all_incomes():
     now = datetime.datetime.now()
     start = datetime.datetime(now.year, now.month, 1)
     end = datetime.datetime(now.year, now.month, now.day)
@@ -21,7 +21,7 @@ def current_report_of_all_incomes():
 def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
-        start, end = current_report_of_all_incomes()
+        start, end = get_start_end_of_current_report_of_all_incomes()
         update.message.reply_text('Sum of incomes in categories:')
 
         for group in user.groups_incomes:

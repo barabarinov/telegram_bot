@@ -3,8 +3,8 @@ import logging
 from telegram import Update
 from telegram.ext import CallbackContext, CommandHandler
 
-from db import Session
-from models import Group_Incomes
+from app.db import Session
+from app.models import Group_Incomes
 
 logger = logging.getLogger(__name__)
 

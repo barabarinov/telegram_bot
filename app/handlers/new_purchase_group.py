@@ -5,8 +5,8 @@ from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters
 from telegram.ext import ConversationHandler
 
-from db import Session
-from models import GroupPurchase
+from app.db import Session
+from app.models import GroupPurchase
 
 logger = logging.getLogger(__name__)
 
