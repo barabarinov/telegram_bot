@@ -1,8 +1,8 @@
-#Python Wallet Tracker Telegram bot
+# Python Wallet Tracker Telegram bot
 
 ---
 
-##Calculation of expenses and income
+## Calculation of expenses and income
 
 ---
 To install requirements run:
