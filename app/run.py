@@ -23,10 +23,9 @@ def monthly_feedback(context: CallbackContext):
                 chat_id=user.telegram_id, text=report)
 
 
-def run(token):
+def run(token, port):
     updater = Updater(token=token, use_context=True)
     j = updater.job_queue
-    j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', register_user_handler))
@@ -37,5 +36,10 @@ def run(token):
     dispatcher.add_handler(CommandHandler('all_incomes', get_sum_of_all_incomes_categories))
     dispatcher.add_handler(CommandHandler('all_purchases', get_sum_of_all_purchases_categories))
 
-    updater.start_polling()
+    j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
+
+    updater.start_webhook(listen="0.0.0.0.",
+                          port=port,
+                          url_path=token)
+    updater.bot.setWebhook(f'https://wallet-tracker-telegram.herokuapp.com/{token}')
     updater.idle()
