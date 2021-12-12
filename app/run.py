@@ -38,8 +38,10 @@ def run(token, port):
 
     j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
 
-    updater.start_webhook(listen="0.0.0.0.",
-                          port=port,
-                          url_path=token)
-    updater.bot.setWebhook(f'https://wallet-tracker-telegram.herokuapp.com/{token}')
+    updater.start_webhook(
+        listen="0.0.0.0.",
+        port=port,
+        url_path=token,
+        webhook_url=f'https://wallet-tracker-telegram.herokuapp.com/{token}'
+    )
     updater.idle()
