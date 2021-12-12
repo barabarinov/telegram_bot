@@ -13,6 +13,7 @@ from app.handlers.report_of_all_incomes_categories import get_sum_of_all_incomes
 from app.handlers.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
 from app.db import Session
 from app.models import User
+from app.create_db import create_tables
 
 
 def monthly_feedback(context: CallbackContext):
@@ -24,6 +25,7 @@ def monthly_feedback(context: CallbackContext):
 
 
 def run(token, port):
+    create_tables()
     updater = Updater(token=token, use_context=True)
     j = updater.job_queue
 
