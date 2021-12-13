@@ -2,7 +2,16 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.db import Session
-from app.models import User
+from app.models import User, GroupPurchase, GroupIncome
+
+DEFAULT_USER_PURCHASE_CATEGORIES = [
+            'Groceries and home appliances',
+            'Transport',
+            'Bills',
+            'Miscellaneous']
+
+DEFAULT_USER_INCOME_CATEGORIES = [
+            'Salary']
 
 
 def register_user_handler(update: Update, context: CallbackContext):
@@ -20,8 +29,27 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.commit()
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="You are registered!",
+                text=f"You are registered, {user.username}!",
             )
+
+            for name in DEFAULT_USER_PURCHASE_CATEGORIES:
+                user_new_purchase_group = GroupPurchase(
+                    user_id=update.effective_user.id,
+                    name=name,
+                )
+                session.add(user_new_purchase_group)
+                session.commit()
+                session.refresh(user_new_purchase_group)
+
+            for name in  DEFAULT_USER_INCOME_CATEGORIES:
+                user_new_income_group = GroupIncome(
+                    user_id=update.effective_user.id,
+                    name=name,
+                )
+                session.add(user_new_income_group)
+                session.commit()
+                session.refresh(user_new_income_group)
+
         else:
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
