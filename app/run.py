@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater
@@ -24,6 +25,9 @@ def monthly_feedback(context: CallbackContext):
                 chat_id=user.telegram_id, text=report)
 
 
+IS_HEROKU = os.getenv('IS_HEROKU', 'true').lower() == 'true'
+
+
 def run(token, port):
     create_tables()
     updater = Updater(token=token, use_context=True)
@@ -39,11 +43,13 @@ def run(token, port):
     dispatcher.add_handler(CommandHandler('all_purchases', get_sum_of_all_purchases_categories))
 
     j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
-
-    updater.start_webhook(
-        listen="0.0.0.0.",
-        port=port,
-        url_path=token,
-        webhook_url=f'https://wallet-tracker-telegram.herokuapp.com/{token}'
-    )
+    if IS_HEROKU:
+        updater.start_webhook(
+            listen="0.0.0.0.",
+            port=port,
+            url_path=token,
+            webhook_url=f'https://wallet-tracker-telegram.herokuapp.com/{token}'
+        )
+    else:
+        updater.start_polling()
     updater.idle()
