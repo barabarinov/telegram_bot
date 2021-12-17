@@ -5,14 +5,7 @@ from telegram.ext import CallbackContext
 
 from app.db import Session
 from app.models import User, GroupPurchase, GroupIncome
-import gettext
 
-
-def _(msg):
-    return msg
-
-
-lang_ru = gettext.translation("ru_RU", localedir="/usr/share/locale", languages=["ru_RU"])
 
 DEFAULT_USER_PURCHASE_CATEGORIES = [
     '🏠 🛒 Groceries and home appliances',
@@ -24,26 +17,6 @@ DEFAULT_USER_INCOME_CATEGORIES = [
     '🤑 Salary']
 
 
-def user_language(func):
-    @wraps(func)
-    def wrapped(update: Update, context: CallbackContext):
-        lang = update.message.from_user.language_code
-        print("LANGUAGE IS", lang)
-
-        global _
-
-        if lang == b"ru_RU":
-            _ = lang_ru.gettext
-        else:
-            def _(msg):
-                return msg
-
-        return func(update, context)
-
-    return wrapped
-
-
-@user_language
 def register_user_handler(update: Update, context: CallbackContext):
     telegram_id = update.effective_user.id
     with Session() as session:

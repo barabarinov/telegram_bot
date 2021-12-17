@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 def get_start_end_of_current_report_of_all_purchases():
     now = datetime.datetime.now()
-    start = datetime.datetime(now.year, now.month, 1)
-    end = datetime.datetime(now.year, now.month, now.day)
+    start = datetime.datetime(now.year, now.month, 1, hour=00, minute=00, second=00)
+    end = datetime.datetime(now.year, now.month, now.day, hour=23, minute=59, second=59)
     return start, end
 
 
