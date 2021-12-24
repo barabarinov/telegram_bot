@@ -1,5 +1,3 @@
-from functools import wraps
-
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -32,8 +30,8 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.commit()
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=_("✅ You are registered, {}!").format(user.username)
-                if update.effective_user.username is not None else _('Incognito'),
+                text="✅ You are registered, {}!".format(user.username)
+                if update.effective_user.username is not None else 'Incognito',
             )
 
             for name in DEFAULT_USER_PURCHASE_CATEGORIES:
@@ -58,8 +56,8 @@ def register_user_handler(update: Update, context: CallbackContext):
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=(
-                    _("❗️ You are already registered") +
-                    f" {update.effective_user.username if update.effective_user.username is not None else 'Incognito'}!" +
-                    _(" Stop it, I'm tired...😩"),
+                    "❗️ You are already registered" +
+                    f" {update.effective_user.username if update.effective_user.username is not None else 'Incognito'}!"+
+                    " Stop it, I'm tired...😩",
                 )
             )
