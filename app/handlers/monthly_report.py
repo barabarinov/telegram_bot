@@ -24,7 +24,7 @@ def get_monthly_report_start_end(user):
 
 
 def get_all_purchases_all_incomes_of_month(user, start, end):
-    logger.info(f'USER START END {user} {start} {end}')
+    logger.info(f' USER START END {user} {start} {end}')
     your_total_purchase = sum(purchase.spent_money for purchase in user.purchases.filter(
         and_(Purchase.creation_date >= start, Purchase.creation_date <= end)))
 
