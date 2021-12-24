@@ -58,6 +58,6 @@ def register_user_handler(update: Update, context: CallbackContext):
                 text=(
                     "❗️ You are already registered" +
                     f" {update.effective_user.username if update.effective_user.username is not None else 'Incognito'}!"+
-                    " Stop it, I'm tired...😩",
+                    " Stop it, I'm tired...😩"
                 )
             )
