@@ -27,7 +27,6 @@ def register_user_handler(update: Update, context: CallbackContext):
                 last_name=update.effective_user.last_name,
             )
             session.add(user)
-            session.commit()
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text="✅ You are registered, {}!".format(user.username)
@@ -39,8 +38,7 @@ def register_user_handler(update: Update, context: CallbackContext):
                     user_id=update.effective_user.id,
                     name=name,
                 )
-            session.add(user_new_purchase_group)
-            session.commit()
+                session.add(user_new_purchase_group)
 
             for name in DEFAULT_USER_INCOMES_CATEGORIES:
                 user_new_income_group = GroupIncome(
@@ -48,7 +46,7 @@ def register_user_handler(update: Update, context: CallbackContext):
                     name=name,
                 )
                 session.add(user_new_income_group)
-                session.commit()
+            session.commit()
 
         else:
             context.bot.send_message(

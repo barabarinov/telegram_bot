@@ -12,6 +12,7 @@ from app.handlers.purchases import new_purchase_conversation_handler
 from app.handlers.registration import register_user_handler
 from app.handlers.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
 from app.handlers.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
+from app.handlers.delete import delete_my_telegram_id_from_telegram_bot
 from app.db import Session
 from app.models import User
 from app.create_db import create_tables
@@ -41,6 +42,7 @@ def run(token, port):
     dispatcher.add_handler(new_income_group_conversation_handler)
     dispatcher.add_handler(CommandHandler('all_incomes', get_sum_of_all_incomes_categories))
     dispatcher.add_handler(CommandHandler('all_expenses', get_sum_of_all_purchases_categories))
+    dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
 
     j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
     if IS_HEROKU:
