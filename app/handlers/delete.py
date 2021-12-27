@@ -11,7 +11,7 @@ def delete_my_telegram_id_from_telegram_bot(update: Update, context: CallbackCon
         user = User(
             telegram_id=telegram_id,
         )
-        session.delete(user)
+        session.remove(user)
         session.commit()
         context.bot.send_message(
             chat_id=update.effective_chat.id,
