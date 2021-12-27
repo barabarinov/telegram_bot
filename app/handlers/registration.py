@@ -41,7 +41,6 @@ def register_user_handler(update: Update, context: CallbackContext):
                 )
                 session.add(user_new_purchase_group)
                 session.commit()
-                session.refresh(user_new_purchase_group)
 
             for name in DEFAULT_USER_INCOME_CATEGORIES:
                 user_new_income_group = GroupIncome(
@@ -50,7 +49,6 @@ def register_user_handler(update: Update, context: CallbackContext):
                 )
                 session.add(user_new_income_group)
                 session.commit()
-                session.refresh(user_new_income_group)
 
         else:
             context.bot.send_message(
