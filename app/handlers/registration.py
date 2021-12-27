@@ -39,16 +39,16 @@ def register_user_handler(update: Update, context: CallbackContext):
                     user_id=update.effective_user.id,
                     name=name,
                 )
-                session.add(user_new_purchase_group)
-                session.commit()
+            session.add(user_new_purchase_group)
+            session.commit()
 
             for name in DEFAULT_USER_INCOME_CATEGORIES:
                 user_new_income_group = GroupIncome(
                     user_id=update.effective_user.id,
                     name=name,
                 )
-                session.add(user_new_income_group)
-                session.commit()
+            session.add(user_new_income_group)
+            session.commit()
 
         else:
             context.bot.send_message(
