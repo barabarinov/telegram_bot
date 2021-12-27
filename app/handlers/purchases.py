@@ -21,7 +21,7 @@ class NewPurchase(IntEnum):
 
 def new_purchase(update: Update, context: CallbackContext):
     reply_keyboard = [['/cancel']]
-    update.message.reply_text('Enter your purchase title:', reply_markup=ReplyKeyboardMarkup(
+    update.message.reply_text('Enter your expense title:', reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
@@ -76,7 +76,7 @@ def get_purchase_group_callback(update: Update, context: CallbackContext):
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
     update.effective_message.reply_text(
-        f'That\'s your purchase!\n{purchase.display_purchase()}', reply_markup=ReplyKeyboardMarkup(
+        f'That\'s your expense!\n{purchase.display_purchase()}', reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t save?'
         ))
 
@@ -93,7 +93,7 @@ def create_purchase(update: Update, context: CallbackContext):
         )
         session.add(user_new_purchase)
         session.commit()
-    update.message.reply_text('Your purchase has been added!')
+    update.message.reply_text('Your expense has been added!')
 
     return ConversationHandler.END
 
@@ -105,7 +105,7 @@ def cancel_creation_purchase(update: Update, context: CallbackContext):
 
 
 new_purchase_conversation_handler = ConversationHandler(
-    entry_points=[CommandHandler('new_purchase', new_purchase)],
+    entry_points=[CommandHandler('new_expense', new_purchase)],
     states={
         NewPurchase.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_purchase_title)],
         NewPurchase.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_purchase_spent_money)],

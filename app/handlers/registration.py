@@ -5,13 +5,13 @@ from app.db import Session
 from app.models import User, GroupPurchase, GroupIncome
 
 
-DEFAULT_USER_PURCHASE_CATEGORIES = [
+DEFAULT_USER_PURCHASES_CATEGORIES = [
     '🏠 🛒 Groceries and home appliances',
     '🚙 Transport',
     '💵 Bills',
     '🛍 Miscellaneous']
 
-DEFAULT_USER_INCOME_CATEGORIES = [
+DEFAULT_USER_INCOMES_CATEGORIES = [
     '🤑 Salary']
 
 
@@ -34,7 +34,7 @@ def register_user_handler(update: Update, context: CallbackContext):
                 if update.effective_user.username is not None else 'Incognito',
             )
 
-            for name in DEFAULT_USER_PURCHASE_CATEGORIES:
+            for name in DEFAULT_USER_PURCHASES_CATEGORIES:
                 user_new_purchase_group = GroupPurchase(
                     user_id=update.effective_user.id,
                     name=name,
@@ -42,13 +42,13 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.add(user_new_purchase_group)
             session.commit()
 
-            for name in DEFAULT_USER_INCOME_CATEGORIES:
+            for name in DEFAULT_USER_INCOMES_CATEGORIES:
                 user_new_income_group = GroupIncome(
                     user_id=update.effective_user.id,
                     name=name,
                 )
-            session.add(user_new_income_group)
-            session.commit()
+                session.add(user_new_income_group)
+                session.commit()
 
         else:
             context.bot.send_message(

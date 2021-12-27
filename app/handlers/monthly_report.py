@@ -32,5 +32,5 @@ def get_all_purchases_all_incomes_of_month(user, start, end):
         and_(Income.creation_date >= start, Income.creation_date <= end)))
     logger.info('TIS')
 
-    return f'Your monthly purchase: ₴ {round(your_total_purchase, 2)}\n' \
+    return f'Your monthly expense: ₴ {round(your_total_purchase, 2)}\n' \
            f'Your monthly income: ₴ {round(your_total_income, 2)}'

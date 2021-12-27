@@ -40,7 +40,7 @@ def run(token, port):
     dispatcher.add_handler(new_purchase_group_conversation_handler)
     dispatcher.add_handler(new_income_group_conversation_handler)
     dispatcher.add_handler(CommandHandler('all_incomes', get_sum_of_all_incomes_categories))
-    dispatcher.add_handler(CommandHandler('all_purchases', get_sum_of_all_purchases_categories))
+    dispatcher.add_handler(CommandHandler('all_expenses', get_sum_of_all_purchases_categories))
 
     j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
     if IS_HEROKU:

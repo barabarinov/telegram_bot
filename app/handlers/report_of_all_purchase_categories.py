@@ -22,7 +22,7 @@ def get_sum_of_all_purchases_categories(update: Update, context: CallbackContext
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         start, end = get_start_end_of_current_report_of_all_purchases()
-        update.message.reply_text('Sum of purchases in categories:')
+        update.message.reply_text('Sum of expenses in categories:')
 
         for group in user.groups_purchases:
             result = sum(purchase.spent_money for purchase in group.purchases.filter(

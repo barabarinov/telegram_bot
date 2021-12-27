@@ -18,7 +18,7 @@ class NewPurchaseGroup(IntEnum):
 
 def new_purchase_group(update: Update, context: CallbackContext):
     reply_keyboard = [['/cancel']]
-    update.message.reply_text('Enter name of the new purchase group!', reply_markup=ReplyKeyboardMarkup(
+    update.message.reply_text('Enter name of the new expense group!', reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
@@ -60,7 +60,7 @@ def cancel_purchase_creation_group(update: Update, context: CallbackContext):
 
 
 new_purchase_group_conversation_handler = ConversationHandler(
-    entry_points=[CommandHandler('new_purchase_group', new_purchase_group)],
+    entry_points=[CommandHandler('new_expense_group', new_purchase_group)],
     states={
         NewPurchaseGroup.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_purchase_group_name)],
         NewPurchaseGroup.CONFIRM: [
