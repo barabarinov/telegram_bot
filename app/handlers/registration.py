@@ -27,6 +27,7 @@ def register_user_handler(update: Update, context: CallbackContext):
                 last_name=update.effective_user.last_name,
             )
             session.add(user)
+            session.commit()
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text="✅ You are registered, {}!".format(user.username)
