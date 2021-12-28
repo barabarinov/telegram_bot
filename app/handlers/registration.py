@@ -6,7 +6,7 @@ from app.models import User, GroupPurchase, GroupIncome
 
 
 DEFAULT_USER_PURCHASES_CATEGORIES = [
-    '🏠 🛒 Groceries and home appliances',
+    '🏠 Groceries and home appliances',
     '🚙 Transport',
     '💵 Bills',
     '🛍 Miscellaneous']
