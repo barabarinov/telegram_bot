@@ -6,11 +6,7 @@ from app.models import User
 
 
 def delete_my_telegram_id_from_telegram_bot(update: Update, context: CallbackContext):
-    telegram_id = update.effective_user.id
     with Session() as session:
-        telegram_id = session.query(User).get(telegram_id)
-        user = User(
-            telegram_id=telegram_id,
-        )
+        user = session.query(User).get(update.effective_user.id)
         session.delete(user)
         session.commit()
