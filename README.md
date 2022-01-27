@@ -20,3 +20,8 @@ To run:
 `python main.py`
 
 ---
+Tables schema:
+
+![tables](docs/pics/Telegram_bot_diagram.png)
+
+---
