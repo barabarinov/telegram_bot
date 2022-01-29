@@ -2,7 +2,7 @@
 
 ---
 
-## Calculation of expenses and income
+## Calculation of expenses and incomes
 
 ---
 To install requirements run:
