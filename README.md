@@ -25,3 +25,6 @@ Tables schema:
 ![tables](docs/pics/Telegram_bot_diagram.png)
 
 ---
+Telegram bot link
+
+https://t.me/Pocket_manage_bot
