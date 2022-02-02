@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 from telegram.ext import CommandHandler, CallbackContext
@@ -16,6 +17,17 @@ from app.handlers.delete import delete_my_telegram_id_from_telegram_bot
 from app.db import Session
 from app.models import User
 from app.create_db import create_tables
+
+
+logger = logging.getLogger(__name__)
+
+
+def daily_message(context: CallbackContext):
+    message = 'Don’t forget to fill in your expenses and incomes for today!'
+    with Session() as session:
+        for user in session.query(User):
+            context.bot.send_message(chat_id=user.telegram_id, text=message)
+            logger.info(f'MESSAGE IS: {message}')
 
 
 def monthly_feedback(context: CallbackContext):
@@ -44,7 +56,9 @@ def run(token, port):
     dispatcher.add_handler(CommandHandler('all_expenses', get_sum_of_all_purchases_categories))
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
 
-    j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 12)
+    j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=17, minute=00, second=00))
+
+    j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
     if IS_HEROKU:
         updater.start_webhook(
             listen="0.0.0.0.",
