@@ -56,7 +56,7 @@ def run(token, port):
     dispatcher.add_handler(CommandHandler('all_expenses', get_sum_of_all_purchases_categories))
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
 
-    j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=17, minute=00, second=00))
+    j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=15, minute=00, second=00))
 
     j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
     if IS_HEROKU:
