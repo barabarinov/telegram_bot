@@ -3,16 +3,30 @@ from telegram.ext import CallbackContext
 
 from app.db import Session
 from app.models import User, GroupPurchase, GroupIncome
+from app.translate import (
+    gettext as _,
+    REGISTERED,
+    INCOGNITO,
+    ALREADY_REGISTERED,
+    STOP_IT,
+    GROCERIES,
+    TRANSPORT,
+    BILLS,
+    MISCELLANEOUS,
+    SALARY,
+)
 
 
-DEFAULT_USER_PURCHASES_CATEGORIES = [
-    '🏠 Groceries and home appliances',
-    '🚙 Transport',
-    '💵 Bills',
-    '🛍 Miscellaneous']
+DEFAULT_USER_EXPENSES_CATEGORIES = [
+    _(GROCERIES),
+    _(TRANSPORT),
+    _(BILLS),
+    _(MISCELLANEOUS)
+]
 
-DEFAULT_USER_INCOMES_CATEGORIES = [
-    '🤑 Salary']
+DEFAULT_USER_INCOME_CATEGORIES = [
+    _(SALARY)
+]
 
 
 def register_user_handler(update: Update, context: CallbackContext):
@@ -29,18 +43,17 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.add(user)
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="✅ You are registered, {}!".format(user.username)
-                if update.effective_user.username is not None else 'Incognito',
+                text=_(REGISTERED, user, user.username) if update.effective_user.username is not None else _(INCOGNITO, user),
             )
 
-            for name in DEFAULT_USER_PURCHASES_CATEGORIES:
+            for name in DEFAULT_USER_EXPENSES_CATEGORIES:
                 user_new_purchase_group = GroupPurchase(
                     user_id=update.effective_user.id,
                     name=name,
                 )
                 session.add(user_new_purchase_group)
 
-            for name in DEFAULT_USER_INCOMES_CATEGORIES:
+            for name in DEFAULT_USER_INCOME_CATEGORIES:
                 user_new_income_group = GroupIncome(
                     user_id=update.effective_user.id,
                     name=name,
@@ -52,8 +65,8 @@ def register_user_handler(update: Update, context: CallbackContext):
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=(
-                    "❗️ You are already registered" +
-                    f" {update.effective_user.username if update.effective_user.username is not None else 'Incognito'}!"+
-                    " Stop it, I'm tired...😩"
+                    _(ALREADY_REGISTERED) +
+                    f" {update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO)}!" +
+                    _(STOP_IT)
                 )
             )

@@ -14,6 +14,7 @@ class User(Base):
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
     enable_monthly_report = Column(Boolean, default=True)
+    lang = ...
 
     incomes = relationship(
         "Income", back_populates="user",
