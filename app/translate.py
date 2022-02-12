@@ -64,8 +64,8 @@ TRANSLATES = {
         EN: '🤑 Salary',
     },
     DELETE: {
-        RU: '🗑 You are deleted, {}!',
-        EN: '🗑 Ваша учетная запись удалена, {}!',
+        RU: '🗑 Ваша учетная запись удалена, {}!',
+        EN: '🗑 You are deleted, {}!',
     },
     CANCEL: {
         RU: '/cancel',
