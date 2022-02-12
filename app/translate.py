@@ -36,12 +36,12 @@ TRANSLATES = {
         EN: 'Incognito',
     },
     ALREADY_REGISTERED: {
-        RU: '❗️ You are already registered',
-        EN: '❗️ Вы уже зарегестрированы',
+        RU: '❗Вы уже зарегестрированы️',
+        EN: '❗️You are already registered',
     },
     STOP_IT: {
-        RU: ' Stop it, I\'m tired...😩',
-        EN: ' Остановись, я устал уже...😩'
+        RU: ' Остановись, я устал уже...😩',
+        EN: ' Stop it, I\'m tired...😩'
     },
     GROCERIES: {
         RU: '🏠 Продукты и все для дома',
