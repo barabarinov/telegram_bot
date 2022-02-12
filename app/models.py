@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, D
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
 
+from app.translate import DEFAULT
 
 Base = declarative_base()
 
@@ -14,7 +15,7 @@ class User(Base):
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
     enable_monthly_report = Column(Boolean, default=True)
-    lang = ...
+    lang = Column(String, nullable=False, default=DEFAULT)
 
     incomes = relationship(
         "Income", back_populates="user",

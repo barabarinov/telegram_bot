@@ -1,3 +1,4 @@
+import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -16,17 +17,18 @@ from app.translate import (
     SALARY,
 )
 
-
 DEFAULT_USER_EXPENSES_CATEGORIES = [
-    _(GROCERIES),
-    _(TRANSPORT),
-    _(BILLS),
-    _(MISCELLANEOUS)
+    GROCERIES,
+    TRANSPORT,
+    BILLS,
+    MISCELLANEOUS,
 ]
 
 DEFAULT_USER_INCOME_CATEGORIES = [
-    _(SALARY)
+    SALARY,
 ]
+
+logger = logging.getLogger(__name__)
 
 
 def register_user_handler(update: Update, context: CallbackContext):
@@ -39,34 +41,41 @@ def register_user_handler(update: Update, context: CallbackContext):
                 username=update.effective_user.username,
                 first_name=update.effective_user.first_name,
                 last_name=update.effective_user.last_name,
+                lang=update.effective_user.language_code,
             )
+            logger.info(f'USERLANG REGISTER USER IS *****{user.lang}*****')
             session.add(user)
+            # session.refresh(user)
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=_(REGISTERED, user, user.username) if update.effective_user.username is not None else _(INCOGNITO, user),
+                text=_(REGISTERED, user.lang, user.username)
+                if update.effective_user.username is not None else _(REGISTERED, user.lang, _(INCOGNITO, user.lang))
+
             )
 
             for name in DEFAULT_USER_EXPENSES_CATEGORIES:
                 user_new_purchase_group = GroupPurchase(
                     user_id=update.effective_user.id,
-                    name=name,
+                    name=_(name, user.lang),
                 )
                 session.add(user_new_purchase_group)
 
             for name in DEFAULT_USER_INCOME_CATEGORIES:
                 user_new_income_group = GroupIncome(
                     user_id=update.effective_user.id,
-                    name=name,
+                    name=_(name, user.lang),
                 )
                 session.add(user_new_income_group)
             session.commit()
 
         else:
+            telegram_id = update.effective_user.id
+            user = session.query(User).get(telegram_id)
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=(
-                    _(ALREADY_REGISTERED) +
-                    f" {update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO)}!" +
-                    _(STOP_IT)
+                        _(ALREADY_REGISTERED, user.lang) +
+                        f' {update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, user.lang)}' +
+                        _(STOP_IT, user.lang)
                 )
             )

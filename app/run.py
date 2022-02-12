@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 
+import telegram.error
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater
 
@@ -26,16 +27,24 @@ def daily_message(context: CallbackContext):
     message = 'Don’t forget to fill in your expenses and incomes for today!'
     with Session() as session:
         for user in session.query(User):
-            context.bot.send_message(chat_id=user.telegram_id, text=message)
-            logger.info(f'MESSAGE IS: {message}')
+            try:
+                context.bot.send_message(chat_id=user.telegram_id, text=message)
+            except telegram.error.Unauthorized:
+                logger.info(f'User {user.username} {user.telegram_id} blocked')
+            else:
+                logger.info(f'User {user.username} {user.telegram_id} sent message')
 
 
 def monthly_feedback(context: CallbackContext):
     with Session() as session:
         for user in session.query(User).filter(User.enable_monthly_report == True):
             report = get_monthly_report_start_end(user)
-            context.bot.send_message(
-                chat_id=user.telegram_id, text=report)
+            try:
+                context.bot.send_message(chat_id=user.telegram_id, text=report)
+            except telegram.error.Unauthorized:
+                logger.info(f'User {user.username} {user.telegram_id} blocked')
+            else:
+                logger.info(f'User {user.username} {user.telegram_id} sent message')
 
 
 IS_HEROKU = os.getenv('IS_HEROKU', 'true').lower() == 'true'

@@ -8,6 +8,16 @@ from telegram.ext import ConversationHandler
 
 from app.db import Session
 from app.models import User, Income, GroupIncome
+from app.translate import (
+    gettext as _,
+    CANCEL,
+    INCOME_TITLE,
+    HOW_MUCH_EARN,
+    SELECT_GROUP,
+    THATS_YOUR_INCOME,
+    INCOME_ADDED,
+    SEEYA,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +29,16 @@ class NewIncome(IntEnum):
     CONFIRM = auto()
 
 
+def find_user_lang(update: Update, context: CallbackContext):
+    with Session() as session:
+        telegram_id = update.effective_user.id
+        user = session.query(User).get(telegram_id)
+        return user.lang
+
+
 def new_income(update: Update, context: CallbackContext):
-    reply_keyboard = [['/cancel']]
-    update.message.reply_text('Enter your income title:', reply_markup=ReplyKeyboardMarkup(
+    reply_keyboard = [['/cancel']] # спросить у Влада
+    update.message.reply_text(_(INCOME_TITLE, find_user_lang()), reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
@@ -33,7 +50,7 @@ def get_income_title(update: Update, context: CallbackContext):
 
     reply_keyboard = [['/cancel']]
 
-    update.message.reply_text('How much did you earn?:', reply_markup=ReplyKeyboardMarkup(
+    update.message.reply_text(_(HOW_MUCH_EARN, find_user_lang()), reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
@@ -65,7 +82,7 @@ def get_income_group_callback(update: Update, context: CallbackContext):
 
     _, group_id = update.callback_query.data.split('$')
     group_id = int(group_id)
-    context.user_data['group_id'] = group_id
+    context.user_data['group_id'] = int(group_id)  # СПРОСИТЬ
     with Session() as session:
         group = session.query(GroupIncome).get(group_id)
 
