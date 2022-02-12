@@ -72,8 +72,8 @@ TRANSLATES = {
         EN: '/отмена',
     },
     HOW_MUCH_EARN: {
-        RU: '❔How much did you earn?:',
-        EN: '❔Сколько вы заработали?:',
+        RU: '❔Сколько вы заработали?:',
+        EN: '❔How much did you earn?:',
     },
     SELECT_GROUP: {
         RU: 'Select group',
