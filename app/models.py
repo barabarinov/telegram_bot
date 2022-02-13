@@ -1,6 +1,10 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
+from app.translate import (
+    gettext as _,
+    DISPLAY_INCOME
+)
 
 from app.translate import DEFAULT
 
@@ -117,10 +121,15 @@ class Income(Base):
     def __repr__(self):
         return f'Income #{self.id}: {self.title[:20]}'
 
-    def display_income(self):
-        return (
-            f'Title: {self.title}\n'
-            f'Earned Money: {self.earned_money}\n'
-            f'Group: {self.group.name if self.group else None}\n'
-            f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
-        )
+    def display_income(self, lang):
+        return (_(DISPLAY_INCOME, lang,
+                  self.title,
+                  self.earned_money,
+                  self.group.name if self.group else None,
+                  self.creation_date.strftime("%H:%M %d/%m/%Y")
+                  )
+                # f'Title: {self.title}\n'
+                # f'Earned Money: {self.earned_money}\n'
+                # f'Group: {self.group.name if self.group else None}\n'
+                # f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
+                )

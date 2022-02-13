@@ -4,6 +4,7 @@ from telegram.ext import CallbackContext
 
 from app.db import Session
 from app.models import User, GroupPurchase, GroupIncome
+from app.handlers.find_user_lang_or_id import find_user_lang
 from app.translate import (
     gettext as _,
     REGISTERED,
@@ -69,13 +70,11 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.commit()
 
         else:
-            telegram_id = update.effective_user.id
-            user = session.query(User).get(telegram_id)
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=(
-                        _(ALREADY_REGISTERED, user.lang) +
-                        f' {update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, user.lang)}' +
-                        _(STOP_IT, user.lang)
+                        _(ALREADY_REGISTERED, find_user_lang) +
+                        f' {update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, find_user_lang(update))}\n' +
+                        _(STOP_IT, find_user_lang)
                 )
             )

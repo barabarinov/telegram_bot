@@ -17,10 +17,10 @@ BILLS = 'bills'
 MISCELLANEOUS = 'miscellaneous'
 SALARY = 'salary'
 DELETE = 'delete'
-CANCEL = 'cancel'
 INCOME_TITLE = 'income title'
 HOW_MUCH_EARN = 'how much earn'
 SELECT_GROUP = 'select group'
+DISPLAY_INCOME = 'display income'
 THATS_YOUR_INCOME = 'That\'s your income'
 INCOME_ADDED = 'income added'
 SEEYA = 'See ya'
@@ -32,15 +32,15 @@ TRANSLATES = {
         EN: '✅ You are registered, {}!',
     },
     INCOGNITO: {
-        RU: 'Инкогнито',
-        EN: 'Incognito',
+        RU: 'безымянный пользователь',
+        EN: 'nameless user',
     },
     ALREADY_REGISTERED: {
         RU: '❗Вы уже зарегестрированы️',
         EN: '❗️You are already registered',
     },
     STOP_IT: {
-        RU: ' Остановись, я устал уже...😩',
+        RU: ' Остановитесь, я устал уже...😩',
         EN: ' Stop it, I\'m tired...😩'
     },
     GROCERIES: {
@@ -67,21 +67,35 @@ TRANSLATES = {
         RU: '🗑 Ваша учетная запись удалена, {}!',
         EN: '🗑 You are deleted, {}!',
     },
-    CANCEL: {
-        RU: '/cancel',
-        EN: '/отмена',
+    INCOME_TITLE: {
+        RU: 'Введите название дохода',
+        EN: 'Enter your income title',
     },
     HOW_MUCH_EARN: {
         RU: '❔Сколько вы заработали?:',
         EN: '❔How much did you earn?:',
     },
     SELECT_GROUP: {
-        RU: 'Select group',
-        EN: 'Выберите группу',
+        RU: 'Select group:',
+        EN: 'Выберите группу:',
+    },
+    DISPLAY_INCOME: {
+        RU: (
+            'Название: {}\n'
+            'Доход: {}\n'
+            'Группа: {}\n'
+            'Дата добавления: {}'
+        ),
+        EN: (
+            'Title: {}\n'
+            'Earned Money: {}\n'
+            'Group: {}\n'
+            'Creation Date: {}'
+        )
     },
     THATS_YOUR_INCOME: {
-        RU: 'Это ваш доход!',
-        EN: 'That\'s your income!',
+        RU: 'Это ваш доход!\n{}',
+        EN: 'That\'s your income!\n{}',
     },
     INCOME_ADDED: {
         RU: '✅ Ваш доход добавлен!',

@@ -5,12 +5,12 @@ from enum import auto, IntEnum
 from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
+from app.handlers.find_user_lang_or_id import find_user_lang, find_effective_user_id
 
 from app.db import Session
 from app.models import User, Income, GroupIncome
 from app.translate import (
     gettext as _,
-    CANCEL,
     INCOME_TITLE,
     HOW_MUCH_EARN,
     SELECT_GROUP,
@@ -29,16 +29,9 @@ class NewIncome(IntEnum):
     CONFIRM = auto()
 
 
-def find_user_lang(update: Update, context: CallbackContext):
-    with Session() as session:
-        telegram_id = update.effective_user.id
-        user = session.query(User).get(telegram_id)
-        return user.lang
-
-
 def new_income(update: Update, context: CallbackContext):
-    reply_keyboard = [['/cancel']] # спросить у Влада
-    update.message.reply_text(_(INCOME_TITLE, find_user_lang()), reply_markup=ReplyKeyboardMarkup(
+    reply_keyboard = [['/cancel']]
+    update.message.reply_text(_(INCOME_TITLE, find_user_lang(update)), reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
@@ -50,7 +43,7 @@ def get_income_title(update: Update, context: CallbackContext):
 
     reply_keyboard = [['/cancel']]
 
-    update.message.reply_text(_(HOW_MUCH_EARN, find_user_lang()), reply_markup=ReplyKeyboardMarkup(
+    update.message.reply_text(_(HOW_MUCH_EARN, find_user_lang(update)), reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
@@ -65,24 +58,23 @@ def get_income_earned_money(update: Update, context: CallbackContext):
 
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
-
         update.message.reply_text(
-            'Select group',
+            _(SELECT_GROUP, user.lang),
             reply_markup=InlineKeyboardMarkup.from_column([
                 InlineKeyboardButton(
                     text=group.name, callback_data=f'set-income-group${group.id}') for group in user.groups_incomes
             ]),
         )
 
-    return NewIncome.CHOOSE_GROUP
+        return NewIncome.CHOOSE_GROUP
 
 
 def get_income_group_callback(update: Update, context: CallbackContext):
     update.callback_query.answer()
 
-    _, group_id = update.callback_query.data.split('$')
+    _other, group_id = update.callback_query.data.split('$')
     group_id = int(group_id)
-    context.user_data['group_id'] = int(group_id)  # СПРОСИТЬ
+    context.user_data['group_id'] = group_id
     with Session() as session:
         group = session.query(GroupIncome).get(group_id)
 
@@ -94,7 +86,8 @@ def get_income_group_callback(update: Update, context: CallbackContext):
     )
     reply_keyboard = [['SAVE', 'DON\'T SAVE']]
     update.effective_message.reply_text(
-        f'That\'s your income!\n{income.display_income()}', reply_markup=ReplyKeyboardMarkup(
+        _(THATS_YOUR_INCOME, find_user_lang(update), income.display_income(find_user_lang(update))),
+        reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t save?'
         ))
 
@@ -111,13 +104,13 @@ def create_income(update: Update, context: CallbackContext):
         )
         session.add(user_new_income)
         session.commit()
-    update.message.reply_text('Your income has been added!')
+    update.message.reply_text(_(INCOME_ADDED, find_user_lang(update)))
 
     return ConversationHandler.END
 
 
 def cancel_creation_income(update: Update, context: CallbackContext):
-    update.message.reply_text('See ya!')
+    update.message.reply_text(_(SEEYA, find_user_lang(update)))
 
     return ConversationHandler.END
 
@@ -127,7 +120,7 @@ new_income_conversation_handler = ConversationHandler(
     states={
         NewIncome.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_income_title)],
         NewIncome.EARNED_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_income_earned_money)],
-        NewIncome.CHOOSE_GROUP: [CallbackQueryHandler(get_income_group_callback,  pattern='^set-income-group', )],
+        NewIncome.CHOOSE_GROUP: [CallbackQueryHandler(get_income_group_callback, pattern='^set-income-group', )],
         NewIncome.CONFIRM: [
             MessageHandler(Filters.regex('^(SAVE)$') & ~Filters.command, create_income),
             MessageHandler(Filters.regex('^(DON\'T SAVE)$') & ~Filters.command, cancel_creation_income),
