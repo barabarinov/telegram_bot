@@ -5,7 +5,7 @@ from enum import auto, IntEnum
 from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
-from app.handlers.find_user_lang_or_id import find_user_lang, find_effective_user_id
+from app.handlers.find_user_lang_or_id import find_user_lang
 
 from app.db import Session
 from app.models import User, Income, GroupIncome
@@ -14,6 +14,8 @@ from app.translate import (
     INCOME_TITLE,
     HOW_MUCH_EARN,
     SELECT_GROUP,
+    SAVE,
+    DONT_SAVE,
     THATS_YOUR_INCOME,
     INCOME_ADDED,
     SEEYA,
@@ -84,11 +86,12 @@ def get_income_group_callback(update: Update, context: CallbackContext):
         creation_date=datetime.datetime.now(),
         group=group,
     )
-    reply_keyboard = [['SAVE', 'DON\'T SAVE']]
+    reply_keyboard = [[_(SAVE, find_user_lang(update)), _(DONT_SAVE, find_user_lang(update))]]
     update.effective_message.reply_text(
         _(THATS_YOUR_INCOME, find_user_lang(update), income.display_income(find_user_lang(update))),
         reply_markup=ReplyKeyboardMarkup(
-            reply_keyboard, one_time_keyboard=True, input_field_placeholder='Save/Don\'t save?'
+            reply_keyboard, one_time_keyboard=True,
+            input_field_placeholder=_(SAVE, find_user_lang(update)) + '/' + _(DONT_SAVE, find_user_lang(update))
         ))
 
     return NewIncome.CONFIRM

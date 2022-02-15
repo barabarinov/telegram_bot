@@ -3,7 +3,8 @@ from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
 from app.translate import (
     gettext as _,
-    DISPLAY_INCOME
+    DISPLAY_INCOME,
+    DISPLAY_EXPENSE,
 )
 
 from app.translate import DEFAULT
@@ -94,13 +95,18 @@ class Purchase(Base):
     def __repr__(self):
         return f'Purchase #{self.id}: {self.title[:20]}'
 
-    def display_purchase(self):
-        return (
-            f'Title: {self.title}\n'
-            f'Spent Money: {self.spent_money}\n'
-            f'Group: {self.group.name if self.group else None}\n'
-            f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
-        )
+    def display_purchase(self, lang):
+        return (_(DISPLAY_EXPENSE, lang,
+                  self.title,
+                  self.spent_money,
+                  self.group.name if self.group else None,
+                  self.creation_date.strftime("%H:%M %d/%m/%Y")
+                  )
+                # f'Title: {self.title}\n'
+                # f'Spent Money: {self.spent_money}\n'
+                # f'Group: {self.group.name if self.group else None}\n'
+                # f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
+                )
 
 
 class Income(Base):

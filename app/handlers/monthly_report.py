@@ -5,6 +5,11 @@ from calendar import monthrange
 from sqlalchemy import and_
 
 from app.models import Purchase, Income
+from app.translate import (
+    gettext as _,
+    MONTHLY_INCOME,
+    MONTHLY_EXPENSE,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -33,5 +38,5 @@ def get_all_purchases_all_incomes_of_month(user, start, end):
         and_(Income.creation_date >= start, Income.creation_date <= end)))
     logger.info('TIS')
 
-    return f'Your monthly expense: ₴ {round(your_total_purchase, 2)}\n' \
-           f'Your monthly income: ₴ {round(your_total_income, 2)}'
+    return _(MONTHLY_INCOME, user.lang, round(your_total_income, 2)) + '\n'\
+           +_(MONTHLY_EXPENSE, user.lang, round(your_total_purchase, 2))
