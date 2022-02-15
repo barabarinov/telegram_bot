@@ -50,6 +50,8 @@ NAME_INCOME_CATEGORY = 'Enter name of the new income category!'
 IS_CORRECT = 'The name for new group is correct?'
 CATEGORY_CREATED = 'The group was created!'
 
+REGEX_YES = '^(YES)$'
+REGEX_NO = '^(NO)$'
 
 TRANSLATES = {
     REGISTERED: {
@@ -61,7 +63,7 @@ TRANSLATES = {
         EN: 'nameless user',
     },
     ALREADY_REGISTERED: {
-        RU: '❗Вы уже зарегестрированы️',
+        RU: '❗Вы уже зарегестрированы️ {}',
         EN: '❗️You are already registered',
     },
     STOP_IT: {
@@ -216,7 +218,14 @@ TRANSLATES = {
         RU: '✅ Новая категория \'{}\' создана!',
         EN: '✅ The new category \'{}\' was created!',
     },
-
+    REGEX_YES: {
+        RU: '^(ДА)$',
+        EN: '^(YES)$',
+    },
+    REGEX_NO: {
+        RU: '^(НЕТ)$',
+        EN: '^(NO)$',
+    },
 
 }
 
