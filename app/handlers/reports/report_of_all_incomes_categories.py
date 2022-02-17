@@ -7,7 +7,6 @@ from telegram.ext import CallbackContext
 
 from app.db import Session
 from app.models import User, Income
-from app.handlers.find_user_lang_or_id import find_user_lang
 from app.translate import (
     gettext as _,
     REPORT_INCOME_CATEGORIES,

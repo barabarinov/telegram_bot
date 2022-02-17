@@ -35,6 +35,8 @@ EXPENSE_ADDED = 'expence added'
 SAVE = 'save'
 DONT_SAVE = 'don\'t save'
 
+DAILY_MESSAGE = 'Don’t forget to fill in your expenses and incomes for today!'
+
 MONTHLY_INCOME = 'monthly income'
 MONTHLY_EXPENSE = 'monthly expense'
 
@@ -170,6 +172,10 @@ TRANSLATES = {
     DONT_SAVE: {
         RU: 'Отмена',
         EN: 'Don\'t save',
+    },
+    DAILY_MESSAGE: {
+        RU: 'Не забудьте внести свои доходы и растраты за сегодня!',
+        EN: 'Don’t forget to enter your incomes and expenses for today!'
     },
     MONTHLY_INCOME: {
         RU: 'Ваш месячный доход: ₴ {}',

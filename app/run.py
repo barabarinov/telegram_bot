@@ -5,26 +5,32 @@ import os
 import telegram.error
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater
+from telegram import Update
 
 from app.handlers.incomes import new_income_conversation_handler
-from app.handlers.monthly_report import get_monthly_report_start_end
+from app.handlers.reports.monthly_report import get_monthly_report_start_end
 from app.handlers.new_income_group import new_income_group_conversation_handler
 from app.handlers.new_purchase_group import new_purchase_group_conversation_handler
 from app.handlers.purchases import new_purchase_conversation_handler
 from app.handlers.registration import register_user_handler
-from app.handlers.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
-from app.handlers.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
+from app.handlers.reports.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
+from app.handlers.reports.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
 from app.handlers.delete import delete_my_telegram_id_from_telegram_bot
 from app.db import Session
 from app.models import User
 from app.create_db import create_tables
+from app.handlers.find_user_lang_or_id import find_user_lang
+from app.translate import (
+    gettext as _,
+    DAILY_MESSAGE,
+)
 
 
 logger = logging.getLogger(__name__)
 
 
-def daily_message(context: CallbackContext):
-    message = 'Don’t forget to fill in your expenses and incomes for today!'
+def daily_message(update: Update, context: CallbackContext):
+    message = _(DAILY_MESSAGE, find_user_lang(update))
     with Session() as session:
         for user in session.query(User):
             try:
