@@ -125,8 +125,8 @@ new_income_conversation_handler = ConversationHandler(
         NewIncome.EARNED_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_income_earned_money)],
         NewIncome.CHOOSE_GROUP: [CallbackQueryHandler(get_income_group_callback, pattern='^set-income-group', )],
         NewIncome.CONFIRM: [
-            MessageHandler(Filters.regex('^(SAVE)$') & ~Filters.command, create_income),
-            MessageHandler(Filters.regex('^(DON\'T SAVE)$') & ~Filters.command, cancel_creation_income),
+            MessageHandler(Filters.regex('^(SAVE|Сохранить)$') & ~Filters.command, create_income),
+            MessageHandler(Filters.regex('^(DON\'T SAVE|Отмена)$') & ~Filters.command, cancel_creation_income),
         ],
     },
     fallbacks=[

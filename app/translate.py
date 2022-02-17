@@ -41,6 +41,7 @@ MONTHLY_EXPENSE = 'monthly expense'
 REPORT_INCOME_CATEGORIES = 'Sum of incomes in categories'
 REPORT_EXPENSE_CATEGORIES = 'Sum of expense in categories'
 TOTAL = 'total'
+OVER_ALL = 'overall'
 SIGN = '$ ₴'
 
 YES_CAPS = 'YES'
@@ -189,6 +190,10 @@ TRANSLATES = {
     TOTAL: {
         RU: 'Итого: ₴ {}',
         EN: 'Total: $ {}',
+    },
+    OVER_ALL: {
+        RU: 'Общая сумма всех доходов: ₴ {}',
+        EN: 'Total of all incomes: $ {}',  # ПРОВЕРИТЬ
     },
     SIGN: {
         RU: '₴',

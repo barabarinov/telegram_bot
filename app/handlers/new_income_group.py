@@ -75,8 +75,8 @@ new_income_group_conversation_handler = ConversationHandler(
     states={
         NewIncomeGroup.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_income_group_name)],
         NewIncomeGroup.CONFIRM: [
-            MessageHandler(Filters.regex('^(YES | ДА)$') & ~Filters.command, create_income_group),
-            MessageHandler(Filters.regex('^(NO | НЕТ)$') & ~Filters.command, cancel_income_creation_group),
+            MessageHandler(Filters.regex('^(YES|ДА)$') & ~Filters.command, create_income_group),
+            MessageHandler(Filters.regex('^(NO|НЕТ)$') & ~Filters.command, cancel_income_creation_group),
         ],
     },
     fallbacks=[
