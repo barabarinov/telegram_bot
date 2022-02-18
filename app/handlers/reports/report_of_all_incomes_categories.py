@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from sqlalchemy import and_
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from app.db import Session
@@ -30,18 +30,21 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         start, end = get_start_end_of_current_report_of_all_incomes()
-        update.message.reply_text(_(REPORT_INCOME_CATEGORIES, user.lang))
+        update.message.reply_text(_(REPORT_INCOME_CATEGORIES, user.lang), parse_mode=ParseMode.MARKDOWN)
 
         for group in user.groups_incomes:
-            details = (f'{income.title}: {_(SIGN, user.lang)} {round(income.earned_money,0)}    {income.creation_date.strftime("%H:%M    %d/%m/%Y")}' for income in group.incomes.filter(
-                and_(Income.creation_date >= start, Income.creation_date <= end))
+            details = (
+                f'_{income.title}_: _{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    _{income.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
+                for income in group.incomes.filter(and_(Income.creation_date >= start, Income.creation_date <= end))
             )
             result = sum(income.earned_money for income in group.incomes.filter(
-                         and_(Income.creation_date >= start, Income.creation_date <= end))
+                and_(Income.creation_date >= start, Income.creation_date <= end))
                          )
-            update.message.reply_text(f'{group.name}:\n' + '\n'.join(details) + '\n' + _(TOTAL, user.lang, round(result, 0)))
+            update.message.reply_text(
+                f'*{group.name}*:\n' + '\n'.join(details) + '\n' + _(TOTAL, user.lang, round(result, 0)),
+                parse_mode=ParseMode.MARKDOWN)
 
         overall_result = sum(income.earned_money for income in user.incomes.filter(
-                            and_(Income.creation_date >= start, Income.creation_date <= end))
+            and_(Income.creation_date >= start, Income.creation_date <= end))
                              )
-        update.message.reply_text(_(OVER_ALL, user.lang, round(overall_result, 0)))
+        update.message.reply_text(_(OVER_ALL, user.lang, round(overall_result, 0)), parse_mode=ParseMode.MARKDOWN)

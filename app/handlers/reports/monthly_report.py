@@ -4,6 +4,7 @@ from calendar import monthrange
 
 from sqlalchemy import and_
 
+from telegram import ParseMode
 from app.models import Purchase, Income
 from app.translate import (
     gettext as _,
@@ -38,5 +39,5 @@ def get_all_purchases_all_incomes_of_month(user, start, end):
         and_(Income.creation_date >= start, Income.creation_date <= end)))
     logger.info('TIS')
 
-    return _(MONTHLY_INCOME, user.lang, round(your_total_income, 0)) + '\n'\
-           +_(MONTHLY_EXPENSE, user.lang, round(your_total_purchase, 0))
+    return _(MONTHLY_INCOME, user.lang, round(your_total_income, 0), parse_mode=ParseMode.MARKDOWN) + '\n'\
+           +_(MONTHLY_EXPENSE, user.lang, round(your_total_purchase, 0), parse_mode=ParseMode.MARKDOWN)

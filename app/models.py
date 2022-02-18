@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
+from telegram import ParseMode
 from app.translate import (
     gettext as _,
     DISPLAY_INCOME,

@@ -2,7 +2,7 @@ import datetime
 import logging
 
 from sqlalchemy import and_
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from app.db import Session
@@ -29,20 +29,22 @@ def get_sum_of_all_purchases_categories(update: Update, context: CallbackContext
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         start, end = get_start_end_of_current_report_of_all_purchases()
-        update.message.reply_text(_(REPORT_EXPENSE_CATEGORIES, user.lang))
+        update.message.reply_text(_(REPORT_EXPENSE_CATEGORIES, user.lang), parse_mode=ParseMode.MARKDOWN)
 
         for group in user.groups_purchases:
             details = (
-                f'{purchase.title}: {_(SIGN, user.lang)} {round(purchase.spent_money,0)}    {purchase.creation_date.strftime("%H:%M    %d/%m/%Y")}' for purchase in group.purchases.filter(
-                and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+                f'_{purchase.title}_: _{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    _{purchase.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
+                for purchase in group.purchases.filter(and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
             )
 
             result = sum(purchase.spent_money for purchase in group.purchases.filter(
-                        and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
-                        )
-            update.message.reply_text(f'{group.name}:\n' + '\n'.join(details) + '\n' + _(TOTAL, user.lang, round(result, 0)))
+                and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+                         )
+            update.message.reply_text(
+                f'*{group.name}*:\n' + '\n'.join(details) + '\n' + _(TOTAL, user.lang, round(result, 0)),
+                parse_mode=ParseMode.MARKDOWN)
 
         overall_result = sum(purchase.spent_money for purchase in user.purchases.filter(
-                            and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
-                            )
-        update.message.reply_text(_(OVER_ALL, user.lang, round(overall_result, 0)))
+            and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+                             )
+        update.message.reply_text(_(OVER_ALL, user.lang, round(overall_result, 0)), parse_mode=ParseMode.MARKDOWN)

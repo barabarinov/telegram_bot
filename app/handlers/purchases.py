@@ -2,7 +2,7 @@ import datetime
 import logging
 from enum import auto, IntEnum
 
-from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
 from app.handlers.find_user_lang_or_id import find_user_lang
@@ -92,7 +92,7 @@ def get_purchase_group_callback(update: Update, context: CallbackContext):
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True,
             input_field_placeholder=_(SAVE, find_user_lang(update)) + '/' + _(DONT_SAVE, find_user_lang(update))
-        ))
+        ), parse_mode=ParseMode.MARKDOWN)
 
     return NewPurchase.CONFIRM
 
@@ -125,8 +125,8 @@ new_purchase_conversation_handler = ConversationHandler(
         NewPurchase.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_purchase_spent_money)],
         NewPurchase.CHOOSE_GROUP: [CallbackQueryHandler(get_purchase_group_callback, pattern='^set-purchase-group', )],
         NewPurchase.CONFIRM: [
-            MessageHandler(Filters.regex('^(SAVE)$') & ~Filters.command, create_purchase),
-            MessageHandler(Filters.regex('^(DON\'T SAVE)$') & ~Filters.command, cancel_creation_purchase),
+            MessageHandler(Filters.regex('^(SAVE|Сохранить)$') & ~Filters.command, create_purchase),
+            MessageHandler(Filters.regex('^(DON\'T SAVE|Отмена)$') & ~Filters.command, cancel_creation_purchase),
         ],
     },
     fallbacks=[

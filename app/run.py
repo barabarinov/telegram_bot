@@ -29,10 +29,11 @@ from app.translate import (
 logger = logging.getLogger(__name__)
 
 
-def daily_message(update: Update, context: CallbackContext):
-    message = _(DAILY_MESSAGE, find_user_lang(update))
+def daily_message(context: CallbackContext):
+
     with Session() as session:
         for user in session.query(User):
+            message = _(DAILY_MESSAGE, user.lang)
             try:
                 context.bot.send_message(chat_id=user.telegram_id, text=message)
             except telegram.error.Unauthorized:

@@ -2,7 +2,7 @@ import datetime
 import logging
 from enum import auto, IntEnum
 
-from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
 from telegram.ext import CallbackContext, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
 from app.handlers.find_user_lang_or_id import find_user_lang
@@ -92,7 +92,7 @@ def get_income_group_callback(update: Update, context: CallbackContext):
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True,
             input_field_placeholder=_(SAVE, find_user_lang(update)) + '/' + _(DONT_SAVE, find_user_lang(update))
-        ))
+        ), parse_mode=ParseMode.MARKDOWN)
 
     return NewIncome.CONFIRM
 

@@ -71,7 +71,7 @@ def cancel_income_creation_group(update: Update, context: CallbackContext):
 
 
 new_income_group_conversation_handler = ConversationHandler(
-    entry_points=[CommandHandler('new_income_group', new_income_group)],
+    entry_points=[CommandHandler('new_income_category', new_income_group)],
     states={
         NewIncomeGroup.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_income_group_name)],
         NewIncomeGroup.CONFIRM: [

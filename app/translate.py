@@ -1,7 +1,7 @@
 import logging
+from telegram import ParseMode
 
 logger = logging.getLogger(__name__)
-
 
 RU = 'ru'
 EN = 'en'
@@ -48,13 +48,12 @@ SIGN = '$ ₴'
 
 YES_CAPS = 'YES'
 NO_CAPS = 'NO'
-YES_NO = 'Yes'
+YES_NO = 'Yes/No'
 NAME_INCOME_CATEGORY = 'Enter name of the new income category!'
-IS_CORRECT = 'The name for new group is correct?'
-CATEGORY_CREATED = 'The group was created!'
+IS_CORRECT = 'The name for new category is correct?'
+CATEGORY_CREATED = 'The category was created!'
 
-REGEX_YES = '^(YES)$'
-REGEX_NO = '^(NO)$'
+NAME_EXPENSE_CATEGORY = 'Enter name of the new expense group!'
 
 TRANSLATES = {
     REGISTERED: {
@@ -111,21 +110,21 @@ TRANSLATES = {
     },
     DISPLAY_INCOME: {
         RU: (
-            'Название: {}\n'
-            'Доход: {}\n'
-            'Категория: {}\n'
-            'Дата добавления: {}'
+            '_Название: {}\n_'
+            '_Доход: {}\n_'
+            '_Категория: {}\n_'
+            '_Дата добавления: {}_'
         ),
         EN: (
-            'Title: {}\n'
-            'Earned Money: {}\n'
-            'Category: {}\n'
-            'Creation Date: {}'
+            '_Title: {}_\n'
+            '_Earned Money: {}_\n'
+            '_Category: {}_\n'
+            '_Creation Date: {}_'
         )
     },
     THATS_YOUR_INCOME: {
-        RU: 'Это ваш доход!\n{}',
-        EN: 'That\'s your income!\n{}',
+        RU: '*Это ваш доход!*\n{}',
+        EN: '*That\'s your income!*\n{}',
     },
     INCOME_ADDED: {
         RU: '✅ Ваш доход добавлен!',
@@ -144,21 +143,21 @@ TRANSLATES = {
         EN: 'How much did you spend?:',
     },
     THATS_YOUR_EXPENSE: {
-        RU: 'Ваш расход!\n{}',
-        EN: 'That\'s your expense!\n{}',
+        RU: '*Ваш расход!*\n{}',
+        EN: '*That\'s your expense!*\n{}',
     },
     DISPLAY_EXPENSE: {
         RU: (
-            'Название: {}\n'
-            'Расход: {}\n'
-            'Категория: {}\n'
-            'Дата добавления: {}'
+            '_Название: {}_\n'
+            '_Расход: {}_\n'
+            '_Категория: {}_\n'
+            '_Дата добавления: {}_'
         ),
         EN: (
-            'Title: {}\n'
-            'Spent Money: {}\n'
-            'Category: {}\n'
-            'Creation Date: {}'
+            '_Title: {}_\n'
+            '_Spent Money: {}_\n'
+            '_Category: {}_\n'
+            '_Creation Date: {}_'
         )
     },
     EXPENSE_ADDED: {
@@ -175,31 +174,31 @@ TRANSLATES = {
     },
     DAILY_MESSAGE: {
         RU: 'Не забудьте внести свои доходы и растраты за сегодня!',
-        EN: 'Don’t forget to enter your incomes and expenses for today!'
+        EN: 'Don’t forget to enter your incomes and expenses for today!',
     },
     MONTHLY_INCOME: {
-        RU: 'Ваш месячный доход: ₴ {}',
-        EN: 'Your monthly income: $ {}',
+        RU: '*Ваш месячный доход: ₴ {}*',
+        EN: '*Your monthly income: $ {}*',
     },
     MONTHLY_EXPENSE: {
-        RU: 'Ваш месячный расход: ₴ {}',
-        EN: 'Your monthly expense: $ {}',
+        RU: '*Ваш месячный расход: ₴ {}*',
+        EN: '*Your monthly expense: $ {}*',
     },
     REPORT_INCOME_CATEGORIES: {
-        RU: 'Сумма доходов по категориям:',
-        EN: 'Sum of incomes in categories:',
+        RU: '*Сумма доходов по категориям:*',
+        EN: '*Sum of incomes in categories:*',
     },
     REPORT_EXPENSE_CATEGORIES: {
-        RU: 'Сумма расходов по категориям:',
-        EN: 'Sum of expenses in categories:',
+        RU: '*Сумма расходов по категориям:*',
+        EN: '*Sum of expenses in categories:*',
     },
     TOTAL: {
-        RU: 'Итого: ₴ {}',
-        EN: 'Total: $ {}',
+        RU: '*Итого: ₴ {}*',
+        EN: '*Total: $ {}*',
     },
     OVER_ALL: {
-        RU: 'Общая сумма всех доходов: ₴ {}',
-        EN: 'Total of all incomes: $ {}',  # ПРОВЕРИТЬ
+        RU: '*Общая сумма доходов: ₴ {}*',
+        EN: '*Total of all incomes: $ {}*',  # ПРОВЕРИТЬ
     },
     SIGN: {
         RU: '₴',
@@ -229,13 +228,9 @@ TRANSLATES = {
         RU: '✅ Новая категория \'{}\' создана!',
         EN: '✅ The new category \'{}\' was created!',
     },
-    REGEX_YES: {
-        RU: '^(ДА)$',
-        EN: '^(YES)$',
-    },
-    REGEX_NO: {
-        RU: '^(НЕТ)$',
-        EN: '^(NO)$',
+    NAME_EXPENSE_CATEGORY: {
+        RU: 'Введите имя новой категории дохода!',
+        EN: 'Enter name of the new expense category!',
     },
 
 }
