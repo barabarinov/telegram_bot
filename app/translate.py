@@ -177,12 +177,12 @@ TRANSLATES = {
         EN: 'Don’t forget to enter your incomes and expenses for today!',
     },
     MONTHLY_INCOME: {
-        RU: '*Ваш месячный доход: ₴ {}*',
-        EN: '*Your monthly income: $ {}*',
+        RU: '*Ваш месячный доход:* _₴ {}_',
+        EN: '*Your monthly income:* _$ {}_',
     },
     MONTHLY_EXPENSE: {
-        RU: '*Ваш месячный расход: ₴ {}*',
-        EN: '*Your monthly expense: $ {}*',
+        RU: '*Ваш месячный расход:* _₴ {}_',
+        EN: '*Your monthly expense:* _$ {}_',
     },
     REPORT_INCOME_CATEGORIES: {
         RU: '*Сумма доходов по категориям:*',
