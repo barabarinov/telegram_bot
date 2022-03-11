@@ -12,7 +12,7 @@ from app.translate import (
     REPORT_INCOME_CATEGORIES,
     TOTAL,
     SIGN,
-    OVER_ALL,
+    OVER_ALL_INCOMES,
 
 )
 
@@ -47,4 +47,4 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
         overall_result = sum(income.earned_money for income in user.incomes.filter(
             and_(Income.creation_date >= start, Income.creation_date <= end))
                              )
-        update.message.reply_text(_(OVER_ALL, user.lang, round(overall_result, 0)), parse_mode=ParseMode.MARKDOWN)
+        update.message.reply_text(_(OVER_ALL_INCOMES, user.lang, round(overall_result, 0)), parse_mode=ParseMode.MARKDOWN)

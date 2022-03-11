@@ -2,23 +2,25 @@ import datetime
 import logging
 import os
 
+
 import telegram.error
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater
-from telegram import Update
+from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 from app.handlers.incomes import new_income_conversation_handler
 from app.handlers.reports.monthly_report import get_monthly_report_start_end
 from app.handlers.new_income_group import new_income_group_conversation_handler
-from app.handlers.new_purchase_group import new_purchase_group_conversation_handler
-from app.handlers.purchases import new_purchase_conversation_handler
+from app.handlers.new_expense_group import new_expense_category_conversation_handler
+from app.handlers.expenses import new_expense_conversation_handler
 from app.handlers.registration import register_user_handler
 from app.handlers.reports.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
-from app.handlers.reports.report_of_all_purchase_categories import get_sum_of_all_purchases_categories
+from app.handlers.reports.report_of_all_expenses_categories import get_sum_of_all_expenses_categories
 from app.handlers.delete import delete_my_telegram_id_from_telegram_bot
 from app.db import Session
 from app.models import User
 from app.create_db import create_tables
+from app.handlers.change_language import change_language_handler
 from app.handlers.find_user_lang_or_id import find_user_lang
 from app.translate import (
     gettext as _,
@@ -64,13 +66,14 @@ def run(token, port):
 
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler('start', register_user_handler))
-    dispatcher.add_handler(new_purchase_conversation_handler)
+    dispatcher.add_handler(new_expense_conversation_handler)
     dispatcher.add_handler(new_income_conversation_handler)
-    dispatcher.add_handler(new_purchase_group_conversation_handler)
+    dispatcher.add_handler(new_expense_category_conversation_handler)
     dispatcher.add_handler(new_income_group_conversation_handler)
     dispatcher.add_handler(CommandHandler('all_incomes', get_sum_of_all_incomes_categories))
-    dispatcher.add_handler(CommandHandler('all_expenses', get_sum_of_all_purchases_categories))
+    dispatcher.add_handler(CommandHandler('all_expenses', get_sum_of_all_expenses_categories))
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
+    dispatcher.add_handler(change_language_handler)
 
     j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=15, minute=00, second=00))
 

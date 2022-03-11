@@ -13,7 +13,7 @@ from app.translate import (
     gettext as _,
     EXPENSE_TITLE,
     HOW_MUCH_SPEND,
-    SELECT_GROUP,
+    SELECT_CATEGORY,
     SAVE,
     DONT_SAVE,
     THATS_YOUR_EXPENSE,
@@ -24,23 +24,23 @@ from app.translate import (
 logger = logging.getLogger(__name__)
 
 
-class NewPurchase(IntEnum):
+class NewExpense(IntEnum):
     TITLE = auto()
     SPENT_MONEY = auto()
-    CHOOSE_GROUP = auto()
+    CHOOSE_CATEGORY = auto()
     CONFIRM = auto()
 
 
-def new_purchase(update: Update, context: CallbackContext):
+def new_expense(update: Update, context: CallbackContext):
     reply_keyboard = [['/cancel']]
     update.message.reply_text(_(EXPENSE_TITLE, find_user_lang(update)), reply_markup=ReplyKeyboardMarkup(
         reply_keyboard, one_time_keyboard=True,
     ))
 
-    return NewPurchase.TITLE
+    return NewExpense.TITLE
 
 
-def get_purchase_title(update: Update, context: CallbackContext):
+def get_expense_title(update: Update, context: CallbackContext):
     context.user_data['title'] = update.message.text
 
     reply_keyboard = [['/cancel']]
@@ -49,10 +49,10 @@ def get_purchase_title(update: Update, context: CallbackContext):
         reply_keyboard, one_time_keyboard=True,
     ))
 
-    return NewPurchase.SPENT_MONEY
+    return NewExpense.SPENT_MONEY
 
 
-def get_purchase_spent_money(update: Update, context: CallbackContext):
+def get_expense_spent_money(update: Update, context: CallbackContext):
     try:
         context.user_data['spent_money'] = float(update.message.text.replace(' ', ''))
     except ValueError:
@@ -61,43 +61,44 @@ def get_purchase_spent_money(update: Update, context: CallbackContext):
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         update.message.reply_text(
-            _(SELECT_GROUP, user.lang),
+            _(SELECT_CATEGORY, user.lang),
             reply_markup=InlineKeyboardMarkup.from_column([
                 InlineKeyboardButton(
-                    text=group.name, callback_data=f'set-purchase-group${group.id}') for group in user.groups_purchases
+                    text=group.name, callback_data=f'set-expense-category${group.id}') for group in
+                user.groups_purchases
             ]),
         )
 
-    return NewPurchase.CHOOSE_GROUP
+    return NewExpense.CHOOSE_CATEGORY
 
 
-def get_purchase_group_callback(update: Update, context: CallbackContext):
+def get_expense_category_callback(update: Update, context: CallbackContext):
     update.callback_query.answer()
 
     _another, group_id = update.callback_query.data.split('$')
     group_id = int(group_id)
     context.user_data['group_id'] = group_id
     with Session() as session:
-        group = session.query(GroupPurchase).get(group_id)
+        category = session.query(GroupPurchase).get(group_id)
 
     purchase = Purchase(
         title=context.user_data['title'],
         spent_money=context.user_data['spent_money'],
         creation_date=datetime.datetime.now(),
-        group=group,
+        group=category,  # тут вместо category было group
     )
     reply_keyboard = [[_(SAVE, find_user_lang(update)), _(DONT_SAVE, find_user_lang(update))]]
     update.effective_message.reply_text(
-        _(THATS_YOUR_EXPENSE, find_user_lang(update), purchase.display_purchase(find_user_lang(update))),
+        _(THATS_YOUR_EXPENSE, find_user_lang(update), purchase.display_expense(find_user_lang(update))),
         reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True,
             input_field_placeholder=_(SAVE, find_user_lang(update)) + '/' + _(DONT_SAVE, find_user_lang(update))
         ), parse_mode=ParseMode.MARKDOWN)
 
-    return NewPurchase.CONFIRM
+    return NewExpense.CONFIRM
 
 
-def create_purchase(update: Update, context: CallbackContext):
+def create_expense(update: Update, context: CallbackContext):
     with Session() as session:
         user_new_purchase = Purchase(
             user_id=update.effective_user.id,
@@ -112,24 +113,25 @@ def create_purchase(update: Update, context: CallbackContext):
     return ConversationHandler.END
 
 
-def cancel_creation_purchase(update: Update, context: CallbackContext):
+def cancel_creation_expense(update: Update, context: CallbackContext):
     update.message.reply_text(_(SEEYA, find_user_lang(update)))
 
     return ConversationHandler.END
 
 
-new_purchase_conversation_handler = ConversationHandler(
-    entry_points=[CommandHandler('new_expense', new_purchase)],
+new_expense_conversation_handler = ConversationHandler(
+    entry_points=[CommandHandler('new_expense', new_expense)],
     states={
-        NewPurchase.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_purchase_title)],
-        NewPurchase.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_purchase_spent_money)],
-        NewPurchase.CHOOSE_GROUP: [CallbackQueryHandler(get_purchase_group_callback, pattern='^set-purchase-group', )],
-        NewPurchase.CONFIRM: [
-            MessageHandler(Filters.regex('^(SAVE|Сохранить)$') & ~Filters.command, create_purchase),
-            MessageHandler(Filters.regex('^(DON\'T SAVE|Отмена)$') & ~Filters.command, cancel_creation_purchase),
+        NewExpense.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_expense_title)],
+        NewExpense.SPENT_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_expense_spent_money)],
+        NewExpense.CHOOSE_CATEGORY: [
+            CallbackQueryHandler(get_expense_category_callback, pattern='^set-expense-category', )],
+        NewExpense.CONFIRM: [
+            MessageHandler(Filters.regex('^(SAVE|СОХРАНИТЬ)$') & ~Filters.command, create_expense),
+            MessageHandler(Filters.regex('^(DON\'T SAVE|ОТМЕНА)$') & ~Filters.command, cancel_creation_expense),
         ],
     },
     fallbacks=[
-        CommandHandler('cancel', cancel_creation_purchase),
+        CommandHandler('cancel', cancel_creation_expense),
     ],
 )

@@ -1,5 +1,4 @@
 import logging
-from telegram import ParseMode
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +19,7 @@ DELETE = 'delete'
 
 INCOME_TITLE = 'income title'
 HOW_MUCH_EARN = 'how much did you earn'
-SELECT_GROUP = 'select group'
+SELECT_CATEGORY = 'select group'
 THATS_YOUR_INCOME = 'That\'s your income'
 DISPLAY_INCOME = 'display income'
 INCOME_ADDED = 'income added'
@@ -29,7 +28,7 @@ SEEYA = 'See ya'
 EXPENSE_TITLE = 'expence title'
 HOW_MUCH_SPEND = 'how much did you spend'
 THATS_YOUR_EXPENSE = 'that\'s your expence'
-DISPLAY_EXPENSE = 'display income'
+DISPLAY_EXPENSE = 'display expense'
 EXPENSE_ADDED = 'expence added'
 
 SAVE = 'save'
@@ -43,7 +42,8 @@ MONTHLY_EXPENSE = 'monthly expense'
 REPORT_INCOME_CATEGORIES = 'Sum of incomes in categories'
 REPORT_EXPENSE_CATEGORIES = 'Sum of expense in categories'
 TOTAL = 'total'
-OVER_ALL = 'overall'
+OVER_ALL_INCOMES = 'overall incomes'
+OVER_ALL_EXPENSES = 'overall expenses'
 SIGN = '$ ₴'
 
 YES_CAPS = 'YES'
@@ -54,6 +54,9 @@ IS_CORRECT = 'The name for new category is correct?'
 CATEGORY_CREATED = 'The category was created!'
 
 NAME_EXPENSE_CATEGORY = 'Enter name of the new expense group!'
+
+CHANGE_LANG = 'Change language'
+YOUR_LANG_CHANGED = 'Language change to...'
 
 TRANSLATES = {
     REGISTERED: {
@@ -69,8 +72,8 @@ TRANSLATES = {
         EN: '❗️You are already registered',
     },
     STOP_IT: {
-        RU: ' Остановитесь, я устал уже...😩',
-        EN: ' Stop it, I\'m tired...😩'
+        RU: 'Хватит нажимать на /start, я устал уже...😩',
+        EN: 'Stop it, I\'m tired...😩'
     },
     GROCERIES: {
         RU: '🏠 Продукты и все для дома',
@@ -104,9 +107,9 @@ TRANSLATES = {
         RU: 'Введите сумму дохода:',
         EN: 'How much did you earn?:',
     },
-    SELECT_GROUP: {
-        RU: 'Select group:',
-        EN: 'Выберите категорию:',
+    SELECT_CATEGORY: {
+        RU: 'Выберите категорию:',
+        EN: 'Select category:',
     },
     DISPLAY_INCOME: {
         RU: (
@@ -165,12 +168,12 @@ TRANSLATES = {
         EN: '✅ Your expense has been added!',
     },
     SAVE: {
-        RU: 'Сохранить',
-        EN: 'Save',
+        RU: 'СОХРАНИТЬ',
+        EN: 'SAVE',
     },
     DONT_SAVE: {
-        RU: 'Отмена',
-        EN: 'Don\'t save',
+        RU: 'ОТМЕНА',
+        EN: 'DON\'T SAVE',
     },
     DAILY_MESSAGE: {
         RU: 'Не забудьте внести свои доходы и растраты за сегодня!',
@@ -196,9 +199,13 @@ TRANSLATES = {
         RU: '*Итого: ₴ {}*',
         EN: '*Total: $ {}*',
     },
-    OVER_ALL: {
+    OVER_ALL_INCOMES: {
         RU: '*Общая сумма доходов: ₴ {}*',
-        EN: '*Total of all incomes: $ {}*',  # ПРОВЕРИТЬ
+        EN: '*Total of all incomes: $ {}*',
+    },
+    OVER_ALL_EXPENSES: {
+        RU: '*Общая сумма расходов: ₴ {}*',
+        EN: '*Total of all expenses: $ {}*',
     },
     SIGN: {
         RU: '₴',
@@ -229,15 +236,23 @@ TRANSLATES = {
         EN: '✅ The new category \'{}\' was created!',
     },
     NAME_EXPENSE_CATEGORY: {
-        RU: 'Введите имя новой категории дохода!',
+        RU: 'Введите имя новой категории расхода!',
         EN: 'Enter name of the new expense category!',
+    },
+    CHANGE_LANG: {
+        RU: 'Выберите язык:',
+        EN: 'Change the language:',
+    },
+    YOUR_LANG_CHANGED: {
+        RU: '✅ Язык изменен на {}!',
+        EN: '✅ Language changed to {}!',
     },
 
 }
 
 
 def gettext(msg_key, lang, *args, **kwargs):
-    logger.info(f'USERLANG GET_TEXT *****{lang}*****###{args}###{kwargs}')
+    logger.info(f'FUNC GET_TEXT USERLANG *****{lang}*****###{args}###{kwargs}')
     if msg_key not in TRANSLATES:
         raise ValueError(f"Not found translate for {msg_key}!")
     message = TRANSLATES[msg_key].get(lang)

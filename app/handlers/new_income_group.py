@@ -30,7 +30,7 @@ class NewIncomeGroup(IntEnum):
 def new_income_group(update: Update, context: CallbackContext):
     reply_keyboard = [['/cancel']]
     update.message.reply_text(_(NAME_INCOME_CATEGORY, find_user_lang(update)), reply_markup=ReplyKeyboardMarkup(
-        reply_keyboard, one_time_keyboard=True,
+        reply_keyboard, one_time_keyboard=True, resize_keyboard=True,
     ))
 
     return NewIncomeGroup.NAME
@@ -41,7 +41,7 @@ def get_new_income_group_name(update: Update, context: CallbackContext):
     logger.info(f'NAME IS HERE {context.user_data["name"]}')
     logger.info(f'CONTEXT = {context}')
 
-    reply_keyboard = [[_(YES_CAPS, find_user_lang(update)), _(NO_CAPS, find_user_lang(update))]]
+    reply_keyboard = [[_(YES_CAPS, find_user_lang(update)), _(NO_CAPS, find_user_lang(update), one_time_keyboard=True)]]
     update.effective_message.reply_text(
         _(IS_CORRECT, find_user_lang(update), context.user_data["name"]), reply_markup=ReplyKeyboardMarkup(
             reply_keyboard, one_time_keyboard=True, input_field_placeholder=_(YES_NO, find_user_lang(update))

@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
-from telegram import ParseMode
 from app.translate import (
     gettext as _,
     DISPLAY_INCOME,
@@ -30,18 +29,18 @@ class User(Base):
         passive_deletes=True,
     )
     purchases = relationship(
-        "Purchase", back_populates="user",
+        "Purchase", back_populates="user",  # Expense
         cascade="all, delete",
         lazy='dynamic',
         passive_deletes=True,
     )
     groups_purchases = relationship(
-        "GroupPurchase", back_populates="user",
+        "GroupPurchase", back_populates="user",  # CategoryExpense
         cascade="all, delete",
         passive_deletes=True,
     )
     groups_incomes = relationship(
-        "GroupIncome", back_populates="user",
+        "GroupIncome", back_populates="user",  # CategoryIncome
         cascade="all, delete",
         passive_deletes=True,
     )
@@ -50,43 +49,43 @@ class User(Base):
         return f'User with telegram id: {self.telegram_id}'
 
 
-class GroupPurchase(Base):
-    __tablename__ = 'groups_purchases'
+class GroupPurchase(Base):  # Category_Expense
+    __tablename__ = 'groups_purchases'  # categories_expenses
 
     id = Column(Integer, primary_key=True, unique=True)
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     name = Column(String(32))
 
-    user = relationship("User", back_populates="groups_purchases")
-    purchases = relationship("Purchase", back_populates="group", lazy='dynamic')
+    user = relationship("User", back_populates="groups_purchases") # categories_expenses
+    purchases = relationship("Purchase", back_populates="group", lazy='dynamic')  # Expense expenses
 
     def __repr__(self):
-        return f'Group of Purchases: {self.name}'
+        return f'Category of Expenses: {self.name}'
 
 
-class GroupIncome(Base):
-    __tablename__ = 'groups_incomes'
+class GroupIncome(Base):  # CategoryIncome
+    __tablename__ = 'groups_incomes'  # categories_incomes
 
     id = Column(Integer, primary_key=True, unique=True)
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     name = Column(String(32))
 
-    user = relationship("User", back_populates="groups_incomes")
-    incomes = relationship("Income", back_populates="group", lazy='dynamic')
+    user = relationship("User", back_populates="groups_incomes")  # categories_incomes
+    incomes = relationship("Income", back_populates="group", lazy='dynamic')  # category
 
     def __repr__(self):
-        return f'Group of Incomes: {self.name}'
+        return f'Category of Incomes: {self.name}'
 
 
-class Purchase(Base):
-    __tablename__ = 'purchases'
+class Purchase(Base):  # Expense
+    __tablename__ = 'purchases'  # expenses
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
-    user = relationship('User', back_populates="purchases")
+    user = relationship('User', back_populates="purchases") # expenses
 
-    group_id = Column(Integer, ForeignKey('groups_purchases.id', ondelete='SET NULL'), nullable=False)
-    group = relationship('GroupPurchase', back_populates="purchases")
+    group_id = Column(Integer, ForeignKey('groups_purchases.id', ondelete='SET NULL'), nullable=False)  # category_id  categories_expenses.id
+    group = relationship('GroupPurchase', back_populates="purchases")  # category CategoryExpense
 
     title = Column(String(64), nullable=False)
     spent_money = Column(DECIMAL, nullable=False)
@@ -94,19 +93,15 @@ class Purchase(Base):
         DateTime, nullable=False, default=datetime.now())
 
     def __repr__(self):
-        return f'Purchase #{self.id}: {self.title[:20]}'
+        return f'Expense #{self.id}: {self.title[:20]}'
 
-    def display_purchase(self, lang):
+    def display_expense(self, lang):
         return (_(DISPLAY_EXPENSE, lang,
                   self.title,
                   self.spent_money,
                   self.group.name if self.group else None,
-                  self.creation_date.strftime("%H:%M %d/%m/%Y")
+                  self.creation_date.strftime("%H:%M  %d/%m/%Y")
                   )
-                # f'Title: {self.title}\n'
-                # f'Spent Money: {self.spent_money}\n'
-                # f'Group: {self.group.name if self.group else None}\n'
-                # f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
                 )
 
 
@@ -117,8 +112,8 @@ class Income(Base):
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
     user = relationship('User', back_populates="incomes")
 
-    group_id = Column(Integer, ForeignKey('groups_incomes.id', ondelete='SET NULL'), nullable=False)
-    group = relationship('GroupIncome', back_populates="incomes")
+    group_id = Column(Integer, ForeignKey('groups_incomes.id', ondelete='SET NULL'), nullable=False)  # category_id  categories_incomes.id
+    group = relationship('GroupIncome', back_populates="incomes")  # category  CategoryIncome
 
     title = Column(String(64), nullable=False)
     earned_money = Column(DECIMAL, nullable=False)
@@ -133,10 +128,6 @@ class Income(Base):
                   self.title,
                   self.earned_money,
                   self.group.name if self.group else None,
-                  self.creation_date.strftime("%H:%M %d/%m/%Y")
+                  self.creation_date.strftime("%H:%M  %d/%m/%Y")
                   )
-                # f'Title: {self.title}\n'
-                # f'Earned Money: {self.earned_money}\n'
-                # f'Group: {self.group.name if self.group else None}\n'
-                # f'Creation Date: {self.creation_date.strftime("%H:%M %d/%m/%Y")}'
                 )

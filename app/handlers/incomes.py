@@ -13,7 +13,7 @@ from app.translate import (
     gettext as _,
     INCOME_TITLE,
     HOW_MUCH_EARN,
-    SELECT_GROUP,
+    SELECT_CATEGORY,
     SAVE,
     DONT_SAVE,
     THATS_YOUR_INCOME,
@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 class NewIncome(IntEnum):
     TITLE = auto()
     EARNED_MONEY = auto()
-    CHOOSE_GROUP = auto()
+    CHOOSE_CATEGORY = auto()
     CONFIRM = auto()
 
 
@@ -61,30 +61,30 @@ def get_income_earned_money(update: Update, context: CallbackContext):
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         update.message.reply_text(
-            _(SELECT_GROUP, user.lang),
+            _(SELECT_CATEGORY, user.lang),
             reply_markup=InlineKeyboardMarkup.from_column([
                 InlineKeyboardButton(
-                    text=group.name, callback_data=f'set-income-group${group.id}') for group in user.groups_incomes
+                    text=group.name, callback_data=f'set-income-category${group.id}') for group in user.groups_incomes
             ]),
         )
 
-        return NewIncome.CHOOSE_GROUP
+        return NewIncome.CHOOSE_CATEGORY
 
 
-def get_income_group_callback(update: Update, context: CallbackContext):
+def get_income_category_callback(update: Update, context: CallbackContext):
     update.callback_query.answer()
 
     _other, group_id = update.callback_query.data.split('$')
     group_id = int(group_id)
     context.user_data['group_id'] = group_id
     with Session() as session:
-        group = session.query(GroupIncome).get(group_id)
+        category = session.query(GroupIncome).get(group_id)
 
     income = Income(
         title=context.user_data['title'],
         earned_money=context.user_data['earned_money'],
         creation_date=datetime.datetime.now(),
-        group=group,
+        group=category,  # тут вместо category было group
     )
     reply_keyboard = [[_(SAVE, find_user_lang(update)), _(DONT_SAVE, find_user_lang(update))]]
     update.effective_message.reply_text(
@@ -123,10 +123,10 @@ new_income_conversation_handler = ConversationHandler(
     states={
         NewIncome.TITLE: [MessageHandler(Filters.text & ~Filters.command, get_income_title)],
         NewIncome.EARNED_MONEY: [MessageHandler(Filters.text & ~Filters.command, get_income_earned_money)],
-        NewIncome.CHOOSE_GROUP: [CallbackQueryHandler(get_income_group_callback, pattern='^set-income-group', )],
+        NewIncome.CHOOSE_CATEGORY: [CallbackQueryHandler(get_income_category_callback, pattern='^set-income-category', )],
         NewIncome.CONFIRM: [
-            MessageHandler(Filters.regex('^(SAVE|Сохранить)$') & ~Filters.command, create_income),
-            MessageHandler(Filters.regex('^(DON\'T SAVE|Отмена)$') & ~Filters.command, cancel_creation_income),
+            MessageHandler(Filters.regex('^(SAVE|СОХРАНИТЬ)$') & ~Filters.command, create_income),
+            MessageHandler(Filters.regex('^(DON\'T SAVE|ОТМЕНА)$') & ~Filters.command, cancel_creation_income),
         ],
     },
     fallbacks=[

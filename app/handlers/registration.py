@@ -55,11 +55,11 @@ def register_user_handler(update: Update, context: CallbackContext):
             )
 
             for name in DEFAULT_USER_EXPENSES_CATEGORIES:
-                user_new_purchase_group = GroupPurchase(
+                user_new_expense_category = GroupPurchase(
                     user_id=update.effective_user.id,
                     name=_(name, user.lang),
                 )
-                session.add(user_new_purchase_group)
+                session.add(user_new_expense_category)
 
             for name in DEFAULT_USER_INCOME_CATEGORIES:
                 user_new_income_group = GroupIncome(

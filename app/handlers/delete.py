@@ -22,4 +22,4 @@ def delete_my_telegram_id_from_telegram_bot(update: Update, context: CallbackCon
         _(DELETE, user.lang, user.username)
         if user.username is not None else _(DELETE, user.lang, _(INCOGNITO, user.lang))
     )
-    logger.info(f'DELETE USER_LANG IS #####{user.lang}#####')
+    logger.info(f'DELETE USER_LANG IS #####{user.username}#{user.lang}#####')
