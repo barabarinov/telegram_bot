@@ -2,11 +2,9 @@ import datetime
 import logging
 import os
 
-
 import telegram.error
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater
-from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 from app.handlers.incomes import new_income_conversation_handler
 from app.handlers.reports.monthly_report import get_monthly_report_start_end
@@ -21,18 +19,15 @@ from app.db import Session
 from app.models import User
 from app.create_db import create_tables
 from app.handlers.change_language import change_language_handler
-from app.handlers.find_user_lang_or_id import find_user_lang
 from app.translate import (
     gettext as _,
     DAILY_MESSAGE,
 )
 
-
 logger = logging.getLogger(__name__)
 
 
 def daily_message(context: CallbackContext):
-
     with Session() as session:
         for user in session.query(User):
             message = _(DAILY_MESSAGE, user.lang)
