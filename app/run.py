@@ -5,6 +5,7 @@ import os
 import telegram.error
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater
+from telegram import ParseMode
 
 from app.handlers.incomes import new_income_conversation_handler
 from app.handlers.reports.monthly_report import get_monthly_report_start_end
@@ -44,7 +45,9 @@ def monthly_feedback(context: CallbackContext):
         for user in session.query(User).filter(User.enable_monthly_report == True):
             report = get_monthly_report_start_end(user)
             try:
-                context.bot.send_message(chat_id=user.telegram_id, text=report)
+                logger.info(f'MONTH REPORT BEFORE MARKDOWN >>>{report}<<<')
+                context.bot.send_message(chat_id=user.telegram_id, text=report, parse_mode=ParseMode.MARKDOWN)
+                logger.info(f'MONTH REPORT AFTER MARKDOWN >>>{report}<<<')
             except telegram.error.Unauthorized:
                 logger.info(f'User {user.username} {user.telegram_id} blocked')
             else:
@@ -72,7 +75,7 @@ def run(token, port):
 
     j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=15, minute=00, second=00))
 
-    j.run_monthly(monthly_feedback, datetime.time(8, 00, 00), 1)
+    j.run_monthly(monthly_feedback, datetime.time(7, 00, 00), 1)
     if IS_HEROKU:
         updater.start_webhook(
             listen="0.0.0.0.",

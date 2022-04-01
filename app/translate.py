@@ -176,7 +176,7 @@ TRANSLATES = {
         EN: 'DON\'T SAVE',
     },
     DAILY_MESSAGE: {
-        RU: 'Не забудьте внести свои доходы и растраты за сегодня!',
+        RU: 'Не забудьте внести свои доходы и расходы за сегодня!',
         EN: 'Don’t forget to enter your incomes and expenses for today!',
     },
     MONTHLY_INCOME: {
