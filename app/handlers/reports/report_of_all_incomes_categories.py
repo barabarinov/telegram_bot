@@ -30,21 +30,31 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         start, end = get_start_end_of_current_report_of_all_incomes()
-        update.message.reply_text(_(REPORT_INCOME_CATEGORIES, user.lang), parse_mode=ParseMode.MARKDOWN)
+
+        update.message.reply_text(
+            text=_(REPORT_INCOME_CATEGORIES, user.lang),
+            parse_mode=ParseMode.MARKDOWN,
+        )
 
         for group in user.groups_incomes:
             details = (
-                f'_{income.title}_: _{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    _{income.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
+                f'_{income.title}_: _{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
+                f'_{income.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
                 for income in group.incomes.filter(and_(Income.creation_date >= start, Income.creation_date <= end))
             )
             result = sum(income.earned_money for income in group.incomes.filter(
                 and_(Income.creation_date >= start, Income.creation_date <= end))
-                         )
+            )
+            n = '\n'
             update.message.reply_text(
-                f'*{group.name}*:\n' + '\n'.join(details) + '\n' + _(TOTAL, user.lang, round(result, 0)),
-                parse_mode=ParseMode.MARKDOWN)
+                f'*{group.name}*:\n{n.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
+                parse_mode=ParseMode.MARKDOWN_V2,
+            )
 
         overall_result = sum(income.earned_money for income in user.incomes.filter(
             and_(Income.creation_date >= start, Income.creation_date <= end))
-                             )
-        update.message.reply_text(_(OVER_ALL_INCOMES, user.lang, round(overall_result, 0)), parse_mode=ParseMode.MARKDOWN)
+        )
+        update.message.reply_text(
+            text=_(OVER_ALL_INCOMES, user.lang, round(overall_result, 0)),
+            parse_mode=ParseMode.MARKDOWN,
+        )

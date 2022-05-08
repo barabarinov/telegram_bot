@@ -3,8 +3,6 @@ import logging
 from calendar import monthrange
 
 from sqlalchemy import and_
-
-from telegram import ParseMode
 from app.models import Purchase, Income
 from app.translate import (
     gettext as _,
@@ -38,5 +36,5 @@ def get_all_purchases_all_incomes_of_month(user, start, end):
     your_total_income = sum(income.earned_money for income in user.incomes.filter(
         and_(Income.creation_date >= start, Income.creation_date <= end)))
 
-    return _(MONTHLY_INCOME, user.lang, round(your_total_income, 0)) + '\n' \
-           + _(MONTHLY_EXPENSE, user.lang, round(your_total_purchase, 0))
+    return (f'{_(MONTHLY_INCOME, user.lang, round(your_total_income, 0))}\n'
+            f'{_(MONTHLY_EXPENSE, user.lang, round(your_total_purchase, 0))}')

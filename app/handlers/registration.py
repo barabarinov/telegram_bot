@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.db import Session
+from app.buttons import reply_keyboard_main_menu
 from app.models import User, GroupPurchase, GroupIncome
 from app.handlers.find_user_lang_or_id import find_user_lang
 from app.translate import (
@@ -34,8 +35,10 @@ logger = logging.getLogger(__name__)
 
 def register_user_handler(update: Update, context: CallbackContext):
     telegram_id = update.effective_user.id
+
     with Session() as session:
         existing_user = session.query(User).get(telegram_id)
+
         if existing_user is None:
             user = User(
                 telegram_id=telegram_id,
@@ -46,12 +49,12 @@ def register_user_handler(update: Update, context: CallbackContext):
             )
             logger.info(f'USERLANG REGISTER USER IS *****{user.lang}*****')
             session.add(user)
-            # session.refresh(user)
+
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=_(REGISTERED, user.lang, user.username)
-                if update.effective_user.username is not None else _(REGISTERED, user.lang, _(INCOGNITO, user.lang))
-
+                if update.effective_user.username is not None else _(REGISTERED, user.lang, _(INCOGNITO, user.lang)),
+                reply_markup=reply_keyboard_main_menu(update, context),
             )
 
             for name in DEFAULT_USER_EXPENSES_CATEGORIES:
@@ -76,5 +79,6 @@ def register_user_handler(update: Update, context: CallbackContext):
                         _(ALREADY_REGISTERED, find_user_lang(update),
                           update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, find_user_lang(update))) + '.\n' +
                         _(STOP_IT, find_user_lang(update))
-                     )
+                     ),
+                reply_markup=reply_keyboard_main_menu(update, context),
             )
