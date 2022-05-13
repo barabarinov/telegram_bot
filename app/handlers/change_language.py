@@ -55,6 +55,7 @@ def change_to_eng_uk_or_ru(update: Update, context: CallbackContext):
             chat_id=query.message.chat_id,
             text=_(YOUR_LANG_CHANGED, user.lang, FLAGS[query.data]),
             reply_markup=reply_keyboard_main_menu(update, context)),
+
     return ConversationHandler.END
 
 
