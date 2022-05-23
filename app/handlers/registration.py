@@ -56,15 +56,13 @@ def register_user_handler(update: Update, context: CallbackContext):
             logger.info(f'USERLANG REGISTER USER IS *****{user.lang}*****')
             session.add(user)
 
-
             reply_keyboard_menu = [
                 [_(CREATE_NEW_EXPENSE, user.lang), _(CREATE_NEW_INCOME, user.lang)],
                 [_(CREATE_EXPENSE_CATEGORY, user.lang), _(CREATE_INCOME_CATEGORY, user.lang)],
                 [_(ALL_EXPENSES, user.lang), _(ALL_INCOMES, user.lang)],
                 [_(LANGUAGE_NAME, user.lang)],
             ]
-            reply_keyboard_main_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard = False)
-
+            reply_keyboard_main_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard=False)
 
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
@@ -89,15 +87,13 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.commit()
 
         else:
-
             reply_keyboard_menu = [
                 [_(CREATE_NEW_EXPENSE, find_user_lang(update)), _(CREATE_NEW_INCOME, find_user_lang(update))],
                 [_(CREATE_EXPENSE_CATEGORY, find_user_lang(update)), _(CREATE_INCOME_CATEGORY, find_user_lang(update))],
                 [_(ALL_EXPENSES, find_user_lang(update)), _(ALL_INCOMES, find_user_lang(update))],
                 [_(LANGUAGE_NAME, find_user_lang(update))],
             ]
-
-            reply_keyboard_main_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard = False)
+            reply_keyboard_main_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard=False)
 
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
