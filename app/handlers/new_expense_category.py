@@ -97,7 +97,7 @@ def cancel_expense_creation_category(update: Update, context: CallbackContext):
 new_expense_category_conversation_handler = ConversationHandler(
     entry_points=[MessageHandler(
         Filters.regex(
-            '^Create new expense category|Створити категорію витрат|Создать категорию расходов$') & ~Filters.command, new_expense_category)],
+            '(Create new expense category|Створити категорію витрат|Создать категорию расходов)') & ~Filters.command, new_expense_category)],
     states={
         NewExpenseCategory.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_expense_category_name)],
         NewExpenseCategory.CONFIRM: [

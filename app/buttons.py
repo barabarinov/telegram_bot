@@ -16,6 +16,7 @@ from app.translate import (
 
 
 def reply_keyboard_main_menu(update: Update, context: CallbackContext):
+
     reply_keyboard_menu = [
         [_(CREATE_NEW_EXPENSE, find_user_lang(update)), _(CREATE_NEW_INCOME, find_user_lang(update))],
         [_(CREATE_EXPENSE_CATEGORY, find_user_lang(update)), _(CREATE_INCOME_CATEGORY, find_user_lang(update))],

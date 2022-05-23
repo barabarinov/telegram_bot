@@ -94,10 +94,11 @@ def cancel_income_creation_category(update: Update, context: CallbackContext):
 
 
 new_income_category_conversation_handler = ConversationHandler(
-    entry_points=[MessageHandler(
-        Filters.regex(
-            '^Create new income category|Створити категорію доходу|Создать категорию дохода$'
-        ) & ~Filters.command, new_income_category)],
+    entry_points=[
+        MessageHandler(Filters.regex(
+            '(Create new income category|Створити категорію доходу|Создать категорию дохода)'
+        ) & ~Filters.command, new_income_category)
+    ],
     states={
         NewIncomeGroup.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_income_category_name)],
         NewIncomeGroup.CONFIRM: [
