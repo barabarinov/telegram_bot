@@ -1,5 +1,6 @@
 from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CallbackContext
+import logging
 
 from app.handlers.find_user_lang_or_id import find_user_lang
 from app.translate import (
@@ -15,13 +16,13 @@ from app.translate import (
 )
 
 
-def reply_keyboard_main_menu(update: Update, context: CallbackContext):
-
+def reply_keyboard_main_menu(update: Update, context: CallbackContext, user_lang):
+    logging.info(f'WHAT IN USER_LANG IS >>> {user_lang}')
     reply_keyboard_menu = [
-        [_(CREATE_NEW_EXPENSE, find_user_lang(update)), _(CREATE_NEW_INCOME, find_user_lang(update))],
-        [_(CREATE_EXPENSE_CATEGORY, find_user_lang(update)), _(CREATE_INCOME_CATEGORY, find_user_lang(update))],
-        [_(ALL_EXPENSES, find_user_lang(update)), _(ALL_INCOMES, find_user_lang(update))],
-        [_(LANGUAGE_NAME, find_user_lang(update))],
+        [_(CREATE_NEW_EXPENSE, user_lang), _(CREATE_NEW_INCOME, user_lang)],
+        [_(CREATE_EXPENSE_CATEGORY, user_lang), _(CREATE_INCOME_CATEGORY, user_lang)],
+        [_(ALL_EXPENSES, user_lang), _(ALL_INCOMES, user_lang)],
+        [_(LANGUAGE_NAME, user_lang)],
     ]
 
     return ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard=False)

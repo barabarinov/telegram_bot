@@ -1,10 +1,11 @@
 import logging
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.db import Session
 from app.models import User, GroupPurchase, GroupIncome
 from app.handlers.find_user_lang_or_id import find_user_lang
+from app.buttons import reply_keyboard_main_menu
 from app.translate import (
     gettext as _,
     REGISTERED,
@@ -16,13 +17,6 @@ from app.translate import (
     BILLS,
     MISCELLANEOUS,
     SALARY,
-    CREATE_NEW_EXPENSE,
-    CREATE_EXPENSE_CATEGORY,
-    ALL_EXPENSES,
-    LANGUAGE_NAME,
-    CREATE_NEW_INCOME,
-    CREATE_INCOME_CATEGORY,
-    ALL_INCOMES,
 )
 
 DEFAULT_USER_EXPENSES_CATEGORIES = [
@@ -56,19 +50,11 @@ def register_user_handler(update: Update, context: CallbackContext):
             logger.info(f'USERLANG REGISTER USER IS *****{user.lang}*****')
             session.add(user)
 
-            reply_keyboard_menu = [
-                [_(CREATE_NEW_EXPENSE, user.lang), _(CREATE_NEW_INCOME, user.lang)],
-                [_(CREATE_EXPENSE_CATEGORY, user.lang), _(CREATE_INCOME_CATEGORY, user.lang)],
-                [_(ALL_EXPENSES, user.lang), _(ALL_INCOMES, user.lang)],
-                [_(LANGUAGE_NAME, user.lang)],
-            ]
-            reply_keyboard_main_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard=False)
-
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=_(REGISTERED, user.lang, user.username)
                 if update.effective_user.username is not None else _(REGISTERED, user.lang, _(INCOGNITO, user.lang)),
-                reply_markup=reply_keyboard_main_menu,
+                reply_markup=reply_keyboard_main_menu(update, context, user.lang),
             )
 
             for name in DEFAULT_USER_EXPENSES_CATEGORIES:
@@ -87,18 +73,10 @@ def register_user_handler(update: Update, context: CallbackContext):
             session.commit()
 
         else:
-            reply_keyboard_menu = [
-                [_(CREATE_NEW_EXPENSE, find_user_lang(update)), _(CREATE_NEW_INCOME, find_user_lang(update))],
-                [_(CREATE_EXPENSE_CATEGORY, find_user_lang(update)), _(CREATE_INCOME_CATEGORY, find_user_lang(update))],
-                [_(ALL_EXPENSES, find_user_lang(update)), _(ALL_INCOMES, find_user_lang(update))],
-                [_(LANGUAGE_NAME, find_user_lang(update))],
-            ]
-            reply_keyboard_main_menu = ReplyKeyboardMarkup(reply_keyboard_menu, one_time_keyboard=False)
-
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=(_(ALREADY_REGISTERED, find_user_lang(update),
                           update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, find_user_lang(update))) + '.\n' +
                         _(STOP_IT, find_user_lang(update))),
-                reply_markup=reply_keyboard_main_menu,
+                reply_markup=reply_keyboard_main_menu(update, context, find_user_lang(update)),
             )
