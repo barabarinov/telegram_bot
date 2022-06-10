@@ -76,7 +76,7 @@ def register_user_handler(update: Update, context: CallbackContext):
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=(_(ALREADY_REGISTERED, find_user_lang(update),
-                          update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, find_user_lang(update))) + '.\n' +
-                        _(STOP_IT, find_user_lang(update))),
+                    update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, find_user_lang(update))) +
+                    _(STOP_IT, find_user_lang(update))),
                 reply_markup=reply_keyboard_main_menu(update, context, find_user_lang(update)),
             )

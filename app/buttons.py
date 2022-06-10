@@ -8,10 +8,11 @@ from app.translate import (
     CREATE_NEW_EXPENSE,
     CREATE_EXPENSE_CATEGORY,
     ALL_EXPENSES,
-    LANGUAGE_NAME,
     CREATE_NEW_INCOME,
     CREATE_INCOME_CATEGORY,
     ALL_INCOMES,
+    LAST_MONTH,
+    LANGUAGE_NAME,
     CANCEL_THIS,
 )
 
@@ -22,6 +23,7 @@ def reply_keyboard_main_menu(update: Update, context: CallbackContext, user_lang
         [_(CREATE_NEW_EXPENSE, user_lang), _(CREATE_NEW_INCOME, user_lang)],
         [_(CREATE_EXPENSE_CATEGORY, user_lang), _(CREATE_INCOME_CATEGORY, user_lang)],
         [_(ALL_EXPENSES, user_lang), _(ALL_INCOMES, user_lang)],
+        [_(LAST_MONTH, user_lang)],
         [_(LANGUAGE_NAME, user_lang)],
     ]
 

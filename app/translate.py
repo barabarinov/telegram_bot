@@ -11,10 +11,11 @@ DEFAULT = EN
 CREATE_NEW_EXPENSE = 'create new expense'
 CREATE_EXPENSE_CATEGORY = 'create new expense category'
 ALL_EXPENSES = 'see all expenses'
-LANGUAGE_NAME = 'language name'
 CREATE_NEW_INCOME = 'create new income'
 CREATE_INCOME_CATEGORY = 'create new income category'
 ALL_INCOMES = 'see all incomes'
+LAST_MONTH = "see statistic of last month"
+LANGUAGE_NAME = 'language name'
 
 # Registration
 REGISTERED = 'register'
@@ -52,8 +53,22 @@ DONT_SAVE = 'don\'t savesave'
 DAILY_MESSAGE = 'Don’t forget to fill in your expenses and incomes for today!'
 
 # Monthly expense/income report
-MONTHLY_INCOME = 'monthly income'
-MONTHLY_EXPENSE = 'monthly expense'
+YOUR_MONTHLY_EXPENSES = 'your monthly expenses'
+YOUR_MONTHLY_INCOME = 'your monthly income'
+
+# Months
+JANUARY = 'January'
+FABRUARY = 'Fabruary'
+MARCH = 'March'
+APRIL = 'April'
+MAY = 'May'
+JUNE = 'June'
+JULY = 'July'
+AUGUST = 'August'
+SEPTEMBER = 'September'
+OCTOBER = 'October'
+NOVEMBER = 'November'
+DECEMBER = 'December'
 
 # Current expense/income report
 REPORT_INCOME_CATEGORIES = 'Sum of incomes in categories'
@@ -89,13 +104,13 @@ TRANSLATES = {
         EN: 'nameless user',
     },
     ALREADY_REGISTERED: {
-        UK: '🟢 Ви вже зареєстровані {}',
-        RU: '🟢 Вы уже зарегестрированы️ {}',
-        EN: '🟢 You are already registered {}',
+        UK: '🟢 Ви вже зареєстровані {}. ',
+        RU: '🟢 Вы уже зарегестрированы️ {}. ',
+        EN: '🟢 You are already registered {}. ',
     },
     STOP_IT: {
-        UK: 'Досить вже тицяти на /start, я замахався вже...😩',
-        RU: 'Хватит нажимать на /start, я устал уже...😩',
+        UK: 'Досить вже тицяти на start, я замахався вже...😩',
+        RU: 'Хватит нажимать на start, я устал уже...😩',
         EN: 'Stop it, I\'m tired...😩'
     },
     DELETE: {
@@ -143,11 +158,6 @@ TRANSLATES = {
         RU: '📉 Статистика доходов',
         EN: '📉 Income statistics',
     },
-    LANGUAGE_NAME: {
-        UK: '🇺🇦 Мова',
-        RU: '🏳️ Язык',
-        EN: '🇬🇧 Language',
-    },
     CREATE_NEW_EXPENSE: {
         UK: '🟥 Додати витрату',
         RU: '🟥 Внести расход',
@@ -162,6 +172,16 @@ TRANSLATES = {
         UK: '📈 Статистика витрат',
         RU: '📈 Статистика расходов',
         EN: '📈 Expenses statistics',
+    },
+    LAST_MONTH: {
+        UK: '📊 Статистика за минулий місяць',
+        RU: '📊 Статистика за прошлый месяц',
+        EN: '📊 Statistic for the last month',
+    },
+    LANGUAGE_NAME: {
+        UK: '🇺🇦 Мова',
+        RU: '🏳️ Язык',
+        EN: '🇬🇧 Language',
     },
     INCOME_TITLE: {
         UK: 'Введіть назву доходу:',
@@ -268,15 +288,75 @@ TRANSLATES = {
         RU: '💭 Не забудьте внести свои доходы и расходы за сегодня!',
         EN: '💭 Don’t forget to enter your incomes and expenses for today!',
     },
-    MONTHLY_INCOME: {
-        UK: '🔵 *Ваш дохід за місяць:* _₴ {}_',
-        RU: '🔵 *Ваш доход за месяц:* _₴ {}_',
-        EN: '🔵 *Your monthly income:* _$ {}_',
+    YOUR_MONTHLY_INCOME: {
+        UK: '🟩 *Звіт по доходах за {}:*',
+        RU: '🟩 *Отчет по доходам за {}:*',
+        EN: '🟩 *Report on income for {}:*',
     },
-    MONTHLY_EXPENSE: {
-        UK: '🟡 *Ваша витрата за місяць:* _₴ {}_',
-        RU: '🟡 *Ваш расход за месяц:* _₴ {}_',
-        EN: '🟡 *Your monthly expense:* _$ {}_',
+    YOUR_MONTHLY_EXPENSES: {
+        UK: '🟥 *Звіт по витратах за {}:*',
+        RU: '🟥 *Отчет по расходам за {}:*',
+        EN: '🟥 *Report on expenses for {}:*',
+    },
+    JANUARY: {
+        UK: 'Січень',
+        RU: 'Январь',
+        EN: 'January',
+    },
+    FABRUARY: {
+        UK: 'Лютий',
+        RU: 'Февраль',
+        EN: 'February',
+    },
+    MARCH: {
+        UK: 'Березень',
+        RU: 'Март',
+        EN: 'March',
+    },
+    APRIL: {
+        UK: 'Квітень',
+        RU: 'Апрель',
+        EN: 'April',
+    },
+    MAY: {
+        UK: 'Травень',
+        RU: 'Май',
+        EN: 'May',
+    },
+    JUNE: {
+        UK: 'Червень',
+        RU: 'Июнь',
+        EN: 'June',
+    },
+    JULY: {
+        UK: 'Липень',
+        RU: 'Июль',
+        EN: 'July',
+    },
+    AUGUST: {
+        UK: 'Серпень',
+        RU: 'Август',
+        EN: 'August',
+    },
+    SEPTEMBER: {
+        UK: 'Вересень',
+        RU: 'Сентябрь',
+        EN: 'September',
+    },
+    OCTOBER: {
+        UK: 'Жовтень',
+        RU: 'Октябрь',
+        EN: 'October',
+    },
+    NOVEMBER: {
+        UK: 'Листопад',
+        RU: 'Ноябрь',
+        EN: 'November',
+    },
+    DECEMBER: {
+        UK: 'Грудень',
+        RU: 'Декабрь',
+        EN: 'December',
     },
     REPORT_INCOME_CATEGORIES: {
         UK: '*Сума доходів по категоріям:*',
@@ -344,7 +424,7 @@ TRANSLATES = {
         EN: 'Select the language:',
     },
     YOUR_LANG_CHANGED: {
-        UK: '✅ Мову змінено на {}',
+        UK: '✅ Мову змінено на {} Слава Україні!',
         RU: '✅ Язык изменен на {}',
         EN: '✅ Language changed to {}',
     },

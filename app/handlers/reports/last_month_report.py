@@ -1,13 +1,13 @@
-import datetime
 import logging
-import telegram.error
-from calendar import monthrange
 
 from sqlalchemy import and_
-from app.db import Session
-from telegram import ParseMode
+
+import telegram.error
+from telegram import ParseMode, Update
 from telegram.ext import CallbackContext
+from app.db import Session
 from app.models import Purchase, Income, User
+from app.handlers.reports.monthly_report import get_monthly_report_start_end, month_name
 from app.translate import (
     gettext as _,
     YOUR_MONTHLY_INCOME,
@@ -16,57 +16,12 @@ from app.translate import (
     OVER_ALL_INCOMES,
     TOTAL,
     SIGN,
-    JANUARY,
-    FABRUARY,
-    MARCH,
-    APRIL,
-    MAY,
-    JUNE,
-    JULY,
-    AUGUST,
-    SEPTEMBER,
-    OCTOBER,
-    NOVEMBER,
-    DECEMBER,
 )
 
 logger = logging.getLogger(__name__)
 
 
-def month_name(user, last_month):
-    month_list = {
-        1: _(JANUARY, user.lang),
-        2: _(FABRUARY, user.lang),
-        3: _(MARCH, user.lang),
-        4: _(APRIL, user.lang),
-        5: _(MAY, user.lang),
-        6: _(JUNE, user.lang),
-        7: _(JULY, user.lang),
-        8: _(AUGUST, user.lang),
-        9: _(SEPTEMBER, user.lang),
-        10: _(OCTOBER, user.lang),
-        11: _(NOVEMBER, user.lang),
-        12: _(DECEMBER, user.lang),
-    }
-    return month_list[last_month]
-
-
-def get_monthly_report_start_end(user):
-    logger.info(f'USER IS: {user}')
-    now = datetime.datetime.now()
-    _, days_in_previous_month = monthrange(now.year, now.month - 1)
-    logger.info(f'>>>>>>>NOW.MONTH = {days_in_previous_month}<<<<<<<<<<')
-    if now.month == 1:
-        start = datetime.datetime(now.year - 1, month=12, day=1, hour=00, minute=00, second=00)
-        end = datetime.datetime(now.year - 1, month=12, day=31, hour=23, minute=59, second=59)
-    else:
-        start = datetime.datetime(now.year, now.month - 1, day=1, hour=00, minute=00, second=00)
-        end = datetime.datetime(now.year, now.month - 1, day=days_in_previous_month, hour=23, minute=59, second=59)
-
-    return start, end, now.month - 1
-
-
-def monthly_feedback(context: CallbackContext):
+def last_month_report(update: Update, context: CallbackContext):
     with Session() as session:
         for user in session.query(User).filter(User.enable_monthly_report == True):
             start, end, last_month = get_monthly_report_start_end(user)
@@ -151,6 +106,7 @@ def monthly_feedback(context: CallbackContext):
                     text=_(OVER_ALL_INCOMES, user.lang, round(overall_result, 0)),
                     parse_mode=ParseMode.MARKDOWN,
                 )
+
             except telegram.error.Unauthorized:
                 logger.info(f'User {user.username} {user.telegram_id} blocked')
             else:

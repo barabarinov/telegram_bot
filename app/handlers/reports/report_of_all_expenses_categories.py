@@ -29,9 +29,11 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
         start, end = get_start_end_of_current_report_of_all_expenses()
+
         update.message.reply_text(
             text=_(REPORT_EXPENSE_CATEGORIES, user.lang),
-            parse_mode=ParseMode.MARKDOWN),
+            parse_mode=ParseMode.MARKDOWN
+        ),
 
         for group in user.groups_purchases:
             details = (

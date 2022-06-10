@@ -5,16 +5,16 @@ import os
 import telegram.error
 from telegram.ext import CommandHandler, CallbackContext
 from telegram.ext import Updater, MessageHandler, Filters
-from telegram import ParseMode
 
 from app.handlers.incomes import new_income_conversation_handler
-from app.handlers.reports.monthly_report import get_monthly_report_start_end
 from app.handlers.new_income_category import new_income_category_conversation_handler
 from app.handlers.new_expense_category import new_expense_category_conversation_handler
 from app.handlers.expenses import new_expense_conversation_handler
 from app.handlers.registration import register_user_handler
 from app.handlers.reports.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
 from app.handlers.reports.report_of_all_expenses_categories import get_sum_of_all_expenses_categories
+from app.handlers.reports.monthly_report import monthly_feedback
+from app.handlers.reports.last_month_report import last_month_report
 from app.handlers.delete import delete_my_telegram_id_from_telegram_bot
 from app.db import Session
 from app.models import User
@@ -34,20 +34,6 @@ def daily_message(context: CallbackContext):
             message = _(DAILY_MESSAGE, user.lang)
             try:
                 context.bot.send_message(chat_id=user.telegram_id, text=message)
-            except telegram.error.Unauthorized:
-                logger.info(f'User {user.username} {user.telegram_id} blocked')
-            else:
-                logger.info(f'User {user.username} {user.telegram_id} sent message')
-
-
-def monthly_feedback(context: CallbackContext):
-    with Session() as session:
-        for user in session.query(User).filter(User.enable_monthly_report == True):
-            report = get_monthly_report_start_end(user)
-            try:
-                logger.info(f'MONTH REPORT BEFORE MARKDOWN >>>{report}<<<')
-                context.bot.send_message(chat_id=user.telegram_id, text=report, parse_mode=ParseMode.MARKDOWN)
-                logger.info(f'MONTH REPORT AFTER MARKDOWN >>>{report}<<<')
             except telegram.error.Unauthorized:
                 logger.info(f'User {user.username} {user.telegram_id} blocked')
             else:
@@ -77,6 +63,11 @@ def run(token, port):
         Filters.regex(
             '^📈 Expenses statistics|📈 Статистика витрат|📈 Статистика расходов$'
             ) & ~Filters.command, get_sum_of_all_expenses_categories)
+    )
+    dispatcher.add_handler(MessageHandler(
+        Filters.regex(
+            '^📊 Statistic for the last month|📊 Статистика за минулий місяць|📊 Статистика за прошлый месяц$'
+            ) & ~Filters.command, last_month_report)
     )
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
     dispatcher.add_handler(change_language_handler)

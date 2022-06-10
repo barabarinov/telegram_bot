@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 ENGLISH = 'en'
 UKRAINIAN = 'uk'
 RUSSIAN = 'ru'
-LANGUAGE = 'en|ua|ru'
+LANGUAGE = 'en|uk|ru'
 FLAGS = {'uk': '🇺🇦', 'en': '🇬🇧', 'ru': '🏳️'}
 
 
@@ -66,7 +66,7 @@ change_language_handler = ConversationHandler(
     )],
     states={
         1: [
-            CallbackQueryHandler(change_to_eng_uk_or_ru, pattern='en|ru|uk'),
+            CallbackQueryHandler(change_to_eng_uk_or_ru, pattern=LANGUAGE),
            ],
     },
     fallbacks=[],
