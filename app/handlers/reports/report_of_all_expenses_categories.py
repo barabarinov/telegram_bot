@@ -17,6 +17,7 @@ from app.translate import (
 
 logger = logging.getLogger(__name__)
 
+from_this = "_*[]()~>#+-=|{}.!"
 
 def get_start_end_of_current_report_of_all_expenses():
     now = datetime.datetime.now()
@@ -35,9 +36,13 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
             parse_mode=ParseMode.MARKDOWN
         ),
 
+        from_this_dict = {"_": "", "*": "", "[": "", "]": "", "(": "", ")": "",
+                          "~": "", ">": "", "#": "", "+": "", "-": "", "=": "",
+                          "|": "", "{": "", "}": "", ".": "", "!": ""}
+
         for group in user.groups_purchases:
             details = (
-                f'_{purchase.title}_: _{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
+                f'_{"".join([i for i in purchase.title if i not in from_this])}_: _{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
                 f'_{purchase.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
                 for purchase in group.purchases.filter(and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
             )
