@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 from_this = "_*[]()~>#+-=|{}.!"
 
+
 def get_start_end_of_current_report_of_all_expenses():
     now = datetime.datetime.now()
     start = datetime.datetime(now.year, now.month, 1, hour=00, minute=00, second=00)
@@ -35,10 +36,6 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
             text=_(REPORT_EXPENSE_CATEGORIES, user.lang),
             parse_mode=ParseMode.MARKDOWN
         ),
-
-        from_this_dict = {"_": "", "*": "", "[": "", "]": "", "(": "", ")": "",
-                          "~": "", ">": "", "#": "", "+": "", "-": "", "=": "",
-                          "|": "", "{": "", "}": "", ".": "", "!": ""}
 
         for group in user.groups_purchases:
             details = (

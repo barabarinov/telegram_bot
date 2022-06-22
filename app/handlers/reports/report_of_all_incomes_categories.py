@@ -38,7 +38,6 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
             parse_mode=ParseMode.MARKDOWN,
         )
 
-
         for group in user.groups_incomes:
             details = (
                 f'_{"".join([i for i in income.title if i not in from_this])}_: _{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
@@ -51,7 +50,7 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
             n = '\n'
             update.message.reply_text(
                 f'*{group.name}*:\n{n.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
-                parse_mode=ParseMode.MARKDOWN,
+                parse_mode=ParseMode.MARKDOWN_V2,
             )
 
         overall_result = sum(income.earned_money for income in user.incomes.filter(
