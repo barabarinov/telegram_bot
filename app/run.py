@@ -23,9 +23,31 @@ from app.handlers.change_language import change_language_handler
 from app.translate import (
     gettext as _,
     DAILY_MESSAGE,
+    ONCE_MESSAGE,
 )
 
 logger = logging.getLogger(__name__)
+
+BANK_NUMBER = '5375414134137446'
+
+
+def once_message(context: CallbackContext):
+    with Session() as session:
+        for user in session.query(User):
+            message = _(ONCE_MESSAGE, user.lang)
+            try:
+                context.bot.send_message(chat_id=user.telegram_id, text=message)
+            except telegram.error.Unauthorized:
+                logger.info(f'User {user.username} {user.telegram_id} blocked')
+            else:
+                logger.info(f'User {user.username} {user.telegram_id} sent message')
+
+            try:
+                context.bot.send_message(chat_id=user.telegram_id, text=BANK_NUMBER)
+            except telegram.error.Unauthorized:
+                logger.info(f'User {user.username} {user.telegram_id} blocked')
+            else:
+                logger.info(f'User {user.username} {user.telegram_id} sent message')
 
 
 def daily_message(context: CallbackContext):
@@ -72,9 +94,10 @@ def run(token, port):
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
     dispatcher.add_handler(change_language_handler)
 
+    j.run_once(once_message, when=(datetime.datetime(day=24, month=6, year=2022, hour=13, minute=18, second=00)))
     j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=12, minute=00, second=00))
-
     j.run_monthly(monthly_feedback, datetime.time(7, 00, 00), 1)
+
     if IS_HEROKU:
         updater.start_webhook(
             listen="0.0.0.0.",

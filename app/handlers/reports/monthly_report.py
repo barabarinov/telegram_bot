@@ -8,6 +8,8 @@ from app.db import Session
 from telegram import ParseMode
 from telegram.ext import CallbackContext
 from app.models import Purchase, Income, User
+from app.handlers.reports.report_of_all_expenses_categories import CHARACTERS, SLASH, NEW_LINE
+
 from app.translate import (
     gettext as _,
     YOUR_MONTHLY_INCOME,
@@ -54,7 +56,7 @@ def month_name(user, last_month):
 def get_monthly_report_start_end(user):
     logger.info(f'USER IS: {user}')
     now = datetime.datetime.now()
-    _, days_in_previous_month = monthrange(now.year, now.month - 1)
+    _thing, days_in_previous_month = monthrange(now.year, now.month - 1)
     logger.info(f'>>>NOW.MONTH = {days_in_previous_month}<<<')
     if now.month == 1:
         start = datetime.datetime(now.year - 1, month=12, day=1, hour=00, minute=00, second=00)
@@ -84,19 +86,19 @@ def monthly_feedback(context: CallbackContext):
             try:
                 for group in user.groups_purchases:
                     details = (
-                        f'_{purchase.title}_: _{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
+                        f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
+                        f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
                         f'_{purchase.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
                         for purchase in group.purchases.filter(
-                        and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
+                            and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
                         )
                     )
                     result = sum(purchase.spent_money for purchase in group.purchases.filter(
                         and_(Purchase.creation_date >= start, Purchase.creation_date <= end)))
 
-                    n = '\n'
                     context.bot.send_message(
                         chat_id=user.telegram_id,
-                        text=f'*{group.name}*:\n{n.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
+                        text=f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
                         parse_mode=ParseMode.MARKDOWN_V2,
                     )
 
@@ -127,19 +129,19 @@ def monthly_feedback(context: CallbackContext):
             try:
                 for group in user.groups_incomes:
                     details = (
-                        f'_{income.title}_: _{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
+                        f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
+                        f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
                         f'_{income.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
                         for income in group.incomes.filter(
-                        and_(Income.creation_date >= start, Income.creation_date <= end)
+                            and_(Income.creation_date >= start, Income.creation_date <= end)
                         )
                     )
                     result = sum(income.earned_money for income in group.incomes.filter(
                         and_(Income.creation_date >= start, Income.creation_date <= end)))
 
-                    n = '\n'
                     context.bot.send_message(
                         chat_id=user.telegram_id,
-                        text=f'*{group.name}*:\n{n.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
+                        text=f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
                         parse_mode=ParseMode.MARKDOWN_V2,
                     )
 
