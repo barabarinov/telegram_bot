@@ -22,6 +22,7 @@ from app.translate import (
     INCOME_ADDED,
     SEEYA,
     CANCEL_THIS,
+    WRONG_VALUE,
 )
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,13 @@ def get_income_earned_money(update: Update, context: CallbackContext):
     try:
         context.user_data['earned_money'] = float(update.message.text.replace(' ', ''))
     except ValueError:
-        return ConversationHandler.END
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=_(WRONG_VALUE, find_user_lang(update)),
+            reply_markup=reply_keyboard_cancel(update, context, CANCEL)
+        )
+
+        return NewIncome.EARNED_MONEY
 
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)

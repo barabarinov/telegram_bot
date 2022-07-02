@@ -21,6 +21,7 @@ from app.translate import (
     EXPENSE_ADDED,
     SEEYA,
     CANCEL_THIS,
+    WRONG_VALUE,
 )
 
 CANCEL = 'cancel'
@@ -62,8 +63,15 @@ def get_expense_title(update: Update, context: CallbackContext):
 def get_expense_spent_money(update: Update, context: CallbackContext):
     try:
         context.user_data['spent_money'] = float(update.message.text.replace(' ', ''))
+        logger.info(f'SPENT_MONEY >>> {context.user_data["spent_money"]}')
     except ValueError:
-        return ConversationHandler.END
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=_(WRONG_VALUE, find_user_lang(update)),
+            reply_markup=reply_keyboard_cancel(update, context, CANCEL)
+        )
+
+        return NewExpense.SPENT_MONEY
 
     with Session() as session:
         user = session.query(User).get(update.effective_user.id)
