@@ -94,7 +94,7 @@ def run(token, port):
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
     dispatcher.add_handler(change_language_handler)
 
-    j.run_once(once_message, when=(datetime.datetime(day=2, month=7, year=2022, hour=12, minute=00)))
+    j.run_once(once_message, when=(datetime.datetime(day=3, month=7, year=2022, hour=12, minute=20)))
     j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=12, minute=00, second=00))
     j.run_monthly(monthly_feedback, datetime.time(7, 00, 00), 1)
 
