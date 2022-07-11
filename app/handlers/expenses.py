@@ -1,4 +1,5 @@
 import datetime
+import pytz
 import logging
 from enum import auto, IntEnum
 
@@ -99,7 +100,7 @@ def get_expense_category_callback(update: Update, context: CallbackContext):
     purchase = Purchase(
         title=context.user_data['title'],
         spent_money=context.user_data['spent_money'],
-        creation_date=datetime.datetime.now(),
+        creation_date=datetime.datetime.now(tz=pytz.timezone('Europe/Kiev')),
         group=category,  # тут вместо category было group
     )
     reply_keyboard_save = [[InlineKeyboardButton(_(SAVE, find_user_lang(update)), callback_data=CALLBACK_SAVE),
