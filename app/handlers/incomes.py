@@ -1,4 +1,5 @@
 import datetime
+import pytz
 import logging
 from enum import auto, IntEnum
 
@@ -95,7 +96,7 @@ def get_income_category_callback(update: Update, context: CallbackContext):
     income = Income(
         title=context.user_data['title'],
         earned_money=context.user_data['earned_money'],
-        creation_date=datetime.datetime.now(),
+        creation_date=datetime.datetime.now(tz=pytz.timezone('Europe/Kiev')),
         group=category,  # тут вместо category было group
     )
 
