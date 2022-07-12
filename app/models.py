@@ -1,3 +1,4 @@
+import pytz
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
@@ -82,7 +83,7 @@ class Purchase(Base):  # Expense
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.telegram_id', ondelete='CASCADE'))
-    user = relationship('User', back_populates="purchases") # expenses
+    user = relationship('User', back_populates="purchases")  # expenses
 
     group_id = Column(Integer, ForeignKey('groups_purchases.id', ondelete='SET NULL'), nullable=False)  # category_id  categories_expenses.id
     group = relationship('GroupPurchase', back_populates="purchases")  # category CategoryExpense
@@ -90,7 +91,8 @@ class Purchase(Base):  # Expense
     title = Column(String(64), nullable=False)
     spent_money = Column(DECIMAL, nullable=False)
     creation_date = Column(
-        DateTime, nullable=False, default=datetime.now())
+        DateTime, nullable=False, default=datetime.now
+    )
 
     def __repr__(self):
         return f'Expense #{self.id}: {self.title[:20]}'

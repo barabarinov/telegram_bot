@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+import pytz
 from sqlalchemy import and_
 from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
@@ -20,7 +21,6 @@ logger = logging.getLogger(__name__)
 NEW_LINE = '\n'
 SLASH = "\\"
 CHARACTERS = "_*[]()~>#+-=|{}.!"
-DELTA = datetime.timedelta(hours=3)
 
 
 def get_start_end_of_current_report_of_all_expenses():
@@ -44,7 +44,7 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
                 f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
-                f'_{(purchase.creation_date + DELTA).strftime("%H:%M    %d/%m/%Y")}_'
+                f'_{purchase.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
                 for purchase in group.purchases.filter(
                     and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
                 )
