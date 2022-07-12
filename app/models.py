@@ -1,7 +1,7 @@
 import pytz
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
-from datetime import datetime
+import datetime
 from app.translate import (
     gettext as _,
     DISPLAY_INCOME,
@@ -9,6 +9,8 @@ from app.translate import (
 )
 
 from app.translate import DEFAULT
+
+FMT = "%H:%M    %d/%m/%Y"
 
 Base = declarative_base()
 
@@ -91,7 +93,7 @@ class Purchase(Base):  # Expense
     title = Column(String(64), nullable=False)
     spent_money = Column(DECIMAL, nullable=False)
     creation_date = Column(
-        DateTime, nullable=False, default=datetime.now
+        DateTime, nullable=False, default=datetime.datetime.now
     )
 
     def __repr__(self):
@@ -102,7 +104,7 @@ class Purchase(Base):  # Expense
                   self.title,
                   self.spent_money,
                   self.group.name if self.group else None,
-                  self.creation_date.strftime("%H:%M  %d/%m/%Y")
+                  self.creation_date.strftime(FMT)
                   )
                 )
 
@@ -120,7 +122,8 @@ class Income(Base):
     title = Column(String(64), nullable=False)
     earned_money = Column(DECIMAL, nullable=False)
     creation_date = Column(
-        DateTime, nullable=False, default=datetime.now())
+        DateTime, nullable=False, default=datetime.datetime.now
+    )
 
     def __repr__(self):
         return f'Income #{self.id}: {self.title[:20]}'
@@ -130,6 +133,6 @@ class Income(Base):
                   self.title,
                   self.earned_money,
                   self.group.name if self.group else None,
-                  self.creation_date.strftime("%H:%M  %d/%m/%Y")
+                  self.creation_date.strftime(FMT)
                   )
                 )

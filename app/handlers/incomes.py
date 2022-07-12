@@ -121,8 +121,9 @@ def create_income(update: Update, context: CallbackContext):
             title=context.user_data['title'],
             earned_money=context.user_data['earned_money'],
             group_id=context.user_data['group_id'],
-            creation_date=datetime.datetime.now(tz=pytz.timezone('Europe/Kiev')),
+            creation_date=datetime.datetime.now(tz=pytz.UTC),
         )
+        logger.info(f'UTC >>> {datetime.datetime.now(tz=pytz.UTC)}')
         session.add(user_new_income)
         session.commit()
 
