@@ -124,9 +124,9 @@ def create_expense(update: Update, context: CallbackContext):
             title=context.user_data['title'],
             spent_money=context.user_data['spent_money'],
             group_id=context.user_data['group_id'],
-            creation_date=datetime.datetime.now(tz=pytz.UTC),
+            creation_date=datetime.datetime.now(tz=pytz.timezone('Europe/Kiev')),
         )
-        logger.info(f'UTC >>> {datetime.datetime.now(tz=pytz.UTC)}')
+
         session.add(user_new_purchase)
         session.commit()
 
