@@ -49,7 +49,7 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
                 f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
-                f'_{income.creation_date.astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
+                f'_{income.creation_date.replace(tzinfo=pytz.utc).astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
                 for income in group.incomes.filter(
                     and_(Income.creation_date >= start, Income.creation_date <= end)
                 )

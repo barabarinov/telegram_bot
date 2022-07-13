@@ -11,6 +11,7 @@ from app.handlers.find_user_lang_or_id import find_user_lang
 from app.db import Session
 from app.buttons import reply_keyboard_cancel
 from app.models import User, Purchase, GroupPurchase
+from app.handlers.reports.report_of_all_expenses_categories import EUROPEKIEV
 from app.translate import (
     gettext as _,
     EXPENSE_TITLE,
@@ -100,7 +101,7 @@ def get_expense_category_callback(update: Update, context: CallbackContext):
     purchase = Purchase(
         title=context.user_data['title'],
         spent_money=context.user_data['spent_money'],
-        creation_date=datetime.datetime.now(tz=pytz.timezone('Europe/Kiev')),
+        creation_date=datetime.datetime.now(tz=pytz.timezone(EUROPEKIEV)),
         group=category,  # тут вместо category было group
     )
     reply_keyboard_save = [[InlineKeyboardButton(_(SAVE, find_user_lang(update)), callback_data=CALLBACK_SAVE),
@@ -124,9 +125,10 @@ def create_expense(update: Update, context: CallbackContext):
             title=context.user_data['title'],
             spent_money=context.user_data['spent_money'],
             group_id=context.user_data['group_id'],
-            creation_date=datetime.datetime.now(tz=pytz.UTC),
+            creation_date=datetime.datetime.utcnow(),
         )
-        logger.info(f'UTC >>> {datetime.datetime.now(tz=pytz.UTC)}')
+
+        logger.info(f'UTCNOW >>> {datetime.datetime.now(tz=pytz.UTC)}')
         session.add(user_new_purchase)
         session.commit()
 

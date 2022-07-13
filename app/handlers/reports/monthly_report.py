@@ -1,4 +1,5 @@
 import datetime
+import pytz
 import logging
 import telegram.error
 from calendar import monthrange
@@ -8,7 +9,13 @@ from app.db import Session
 from telegram import ParseMode
 from telegram.ext import CallbackContext
 from app.models import Purchase, Income, User
-from app.handlers.reports.report_of_all_expenses_categories import CHARACTERS, SLASH, NEW_LINE
+from app.handlers.reports.report_of_all_expenses_categories import (
+    CHARACTERS,
+    SLASH,
+    NEW_LINE,
+    EUROPEKIEV,
+    FMT,
+)
 
 from app.translate import (
     gettext as _,
@@ -57,7 +64,7 @@ def get_monthly_report_start_end(user):
     logger.info(f'USER IS: {user}')
     now = datetime.datetime.now()
     _thing, days_in_previous_month = monthrange(now.year, now.month - 1)
-    logger.info(f'>>>NOW.MONTH = {days_in_previous_month}<<<')
+    logger.info(f'>>> NOW.MONTH = {days_in_previous_month} <<<')
     if now.month == 1:
         start = datetime.datetime(now.year - 1, month=12, day=1, hour=00, minute=00, second=00)
         end = datetime.datetime(now.year - 1, month=12, day=31, hour=23, minute=59, second=59)
@@ -88,7 +95,7 @@ def monthly_feedback(context: CallbackContext):
                 details = (
                     f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
                     f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
-                    f'_{purchase.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
+                    f'_{purchase.creation_date.replace(tzinfo=pytz.utc).astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
                     for purchase in group.purchases.filter(
                         and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
                     )
@@ -135,7 +142,7 @@ def monthly_feedback(context: CallbackContext):
                 details = (
                     f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
                     f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
-                    f'_{income.creation_date.strftime("%H:%M    %d/%m/%Y")}_'
+                    f'_{income.creation_date.replace(tzinfo=pytz.utc).astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
                     for income in group.incomes.filter(
                         and_(Income.creation_date >= start, Income.creation_date <= end)
                     )

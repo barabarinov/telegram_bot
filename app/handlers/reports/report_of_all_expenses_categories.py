@@ -46,7 +46,7 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
                 f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
-                f'_{purchase.creation_date.astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
+                f'_{purchase.creation_date.replace(tzinfo=pytz.utc).astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
                 for purchase in group.purchases.filter(
                     and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
                 )

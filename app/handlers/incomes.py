@@ -12,6 +12,7 @@ from app.handlers.expenses import CANCEL, CALLBACK_SAVE
 from app.db import Session
 from app.buttons import reply_keyboard_cancel
 from app.models import User, Income, GroupIncome
+from app.handlers.reports.report_of_all_expenses_categories import EUROPEKIEV
 from app.translate import (
     gettext as _,
     INCOME_TITLE,
@@ -96,7 +97,7 @@ def get_income_category_callback(update: Update, context: CallbackContext):
     income = Income(
         title=context.user_data['title'],
         earned_money=context.user_data['earned_money'],
-        creation_date=datetime.datetime.now(tz=pytz.timezone('Europe/Kiev')),
+        creation_date=datetime.datetime.now(tz=pytz.timezone(EUROPEKIEV)),
         group=category,  # тут вместо category было group
     )
 
@@ -121,9 +122,10 @@ def create_income(update: Update, context: CallbackContext):
             title=context.user_data['title'],
             earned_money=context.user_data['earned_money'],
             group_id=context.user_data['group_id'],
-            creation_date=datetime.datetime.now(tz=pytz.UTC),
+            creation_date=datetime.datetime.utcnow(),
         )
-        logger.info(f'UTC >>> {datetime.datetime.now(tz=pytz.UTC)}')
+
+        logger.info(f'UTCNOW >>> {datetime.datetime.now(tz=pytz.UTC)}')
         session.add(user_new_income)
         session.commit()
 
