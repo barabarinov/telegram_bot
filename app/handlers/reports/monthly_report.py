@@ -90,12 +90,12 @@ def monthly_feedback(context: CallbackContext):
             else:
                 logger.info(f'User {user.username} {user.telegram_id} sent message')
 
-
             for group in user.groups_purchases:
                 details = (
                     f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
                     f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
-                    f'_{purchase.creation_date.replace(tzinfo=pytz.utc).astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
+                    f'''_{purchase.creation_date.replace(tzinfo=pytz.utc).astimezone(
+                                                                        tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'''
                     for purchase in group.purchases.filter(
                         and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
                     )
@@ -137,12 +137,12 @@ def monthly_feedback(context: CallbackContext):
             else:
                 logger.info(f'User {user.username} {user.telegram_id} sent message')
 
-
             for group in user.groups_incomes:
                 details = (
                     f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
                     f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
-                    f'_{income.creation_date.replace(tzinfo=pytz.utc).astimezone(tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'
+                    f'''_{income.creation_date.replace(tzinfo=pytz.utc).astimezone(
+                                                                        tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'''
                     for income in group.incomes.filter(
                         and_(Income.creation_date >= start, Income.creation_date <= end)
                     )
