@@ -1,4 +1,5 @@
 import datetime
+import pytz
 import logging
 import os
 
@@ -12,7 +13,7 @@ from app.handlers.new_expense_category import new_expense_category_conversation_
 from app.handlers.expenses import new_expense_conversation_handler
 from app.handlers.registration import register_user_handler
 from app.handlers.reports.report_of_all_incomes_categories import get_sum_of_all_incomes_categories
-from app.handlers.reports.report_of_all_expenses_categories import get_sum_of_all_expenses_categories
+from app.handlers.reports.report_of_all_expenses_categories import get_sum_of_all_expenses_categories, EUROPEKIEV
 from app.handlers.reports.monthly_report import monthly_feedback
 from app.handlers.reports.last_month_report import last_month_report
 from app.handlers.delete import delete_my_telegram_id_from_telegram_bot
@@ -28,7 +29,7 @@ from app.translate import (
 
 logger = logging.getLogger(__name__)
 
-BANK_NUMBER = '5375414134137446'
+BANK_NUMBER = os.getenv('BANKNUMBER')
 
 
 def once_message(context: CallbackContext):
@@ -94,9 +95,16 @@ def run(token, port):
     dispatcher.add_handler(CommandHandler('delete_me', delete_my_telegram_id_from_telegram_bot))
     dispatcher.add_handler(change_language_handler)
 
-    j.run_once(once_message, when=(datetime.datetime(day=3, month=7, year=2022, hour=12, minute=20)))
-    j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(hour=12, minute=00, second=00))
-    j.run_monthly(monthly_feedback, datetime.time(7, 00, 00), 1)  # tzinfo=pytz.timezone('EUROPE/KIEV')
+    j.run_once(once_message, when=pytz.timezone(EUROPEKIEV).localize(datetime.datetime(
+        day=13, month=7, year=2022, hour=14, minute=59))
+    )
+
+    j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(
+        hour=15, minute=00, second=00,
+        tzinfo=pytz.timezone(EUROPEKIEV))
+    )
+
+    j.run_monthly(monthly_feedback, datetime.time(10, 00, 00, tzinfo=pytz.timezone(EUROPEKIEV)), 1)
 
     if IS_HEROKU:
         updater.start_webhook(
