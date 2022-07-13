@@ -96,7 +96,7 @@ def run(token, port):
     dispatcher.add_handler(change_language_handler)
 
     j.run_once(once_message, when=pytz.timezone(EUROPEKIEV).localize(datetime.datetime(
-        day=13, month=7, year=2022, hour=14, minute=59)),
+        day=14, month=7, year=2022, hour=12, minute=00)),
     )
 
     j.run_daily(daily_message, days=tuple(range(7)), time=datetime.time(
