@@ -1,5 +1,4 @@
 import datetime
-import pytz
 import logging
 import telegram.error
 from calendar import monthrange
@@ -9,6 +8,7 @@ from app.db import Session
 from telegram import ParseMode
 from telegram.ext import CallbackContext
 from app.models import Purchase, Income, User
+from app.datatime_to_europekyiv import get_kyiv_timezone
 from app.handlers.reports.report_of_all_expenses_categories import (
     CHARACTERS,
     SLASH,
@@ -94,8 +94,7 @@ def monthly_feedback(context: CallbackContext):
                 details = (
                     f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
                     f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
-                    f'''_{purchase.creation_date.replace(tzinfo=pytz.utc).astimezone(
-                                                                        tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'''
+                    f'_{get_kyiv_timezone(purchase.creation_date, EUROPEKIEV, FMT)}_'
                     for purchase in group.purchases.filter(
                         and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
                     )
@@ -141,8 +140,7 @@ def monthly_feedback(context: CallbackContext):
                 details = (
                     f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
                     f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
-                    f'''_{income.creation_date.replace(tzinfo=pytz.utc).astimezone(
-                                                                        tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'''
+                    f'_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_'
                     for income in group.incomes.filter(
                         and_(Income.creation_date >= start, Income.creation_date <= end)
                     )

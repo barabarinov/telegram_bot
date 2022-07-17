@@ -1,5 +1,4 @@
 import datetime
-import pytz
 import logging
 
 from sqlalchemy import and_
@@ -7,6 +6,7 @@ from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 
 from app.db import Session
+from app.datatime_to_europekyiv import get_kyiv_timezone
 from app.handlers.reports.report_of_all_expenses_categories import (
     CHARACTERS,
     SLASH,
@@ -49,8 +49,7 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
                 f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
-                f'''_{income.creation_date.replace(tzinfo=pytz.utc).astimezone(
-                                                                    tz=pytz.timezone(EUROPEKIEV)).strftime(FMT)}_'''
+                f'_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_'
                 for income in group.incomes.filter(
                     and_(Income.creation_date >= start, Income.creation_date <= end)
                 )
