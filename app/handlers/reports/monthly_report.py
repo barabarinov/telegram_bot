@@ -55,7 +55,7 @@ def month_name(user, last_month):
         9: _(SEPTEMBER, user.lang),
         10: _(OCTOBER, user.lang),
         11: _(NOVEMBER, user.lang),
-        12: _(DECEMBER, user.lang),
+        0: _(DECEMBER, user.lang),
     }
     return month_list[last_month]
 
@@ -79,6 +79,7 @@ def monthly_feedback(context: CallbackContext):
     with Session() as session:
         for user in session.query(User).filter(User.enable_monthly_report == True):
             start, end, last_month = get_monthly_report_start_end(user)
+            logger.info(f'LAST MONTH >>> {last_month}')
             try:
                 context.bot.send_message(
                     chat_id=user.telegram_id,
