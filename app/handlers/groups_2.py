@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 def new_group_single(update: Update, context: CallbackContext):
-    logger.info(f'TEXT IS HERE {update.message.text}')
     with Session() as session:
         user_new_group = GroupIncome(
             user_id=update.effective_user.id,

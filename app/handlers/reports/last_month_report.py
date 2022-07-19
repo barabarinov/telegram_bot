@@ -35,7 +35,7 @@ def last_month_report(update: Update, context: CallbackContext):
         user = session.query(User).get(update.effective_user.id)
 
         start, end, last_month = get_monthly_report_start_end(user)
-        
+
         try:
             context.bot.send_message(
                 chat_id=user.telegram_id,
