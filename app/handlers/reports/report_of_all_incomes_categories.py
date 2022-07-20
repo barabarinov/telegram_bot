@@ -48,7 +48,7 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
         for group in user.groups_incomes:
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
-                f'_{_(SIGN, user.lang)}_ _{round(income.earned_money, 0)}_    '
+                f'_{_(SIGN, user.lang)}_ _{round(income.earned_money)}_    '
                 f'_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_'
                 for income in group.incomes.filter(
                     and_(Income.creation_date >= start, Income.creation_date <= end)
@@ -59,7 +59,7 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
             )
 
             update.message.reply_text(
-                f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
+                f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result))}',
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
 
@@ -67,6 +67,6 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
             and_(Income.creation_date >= start, Income.creation_date <= end))
         )
         update.message.reply_text(
-            text=_(OVER_ALL_INCOMES, user.lang, round(overall_result, 0)),
+            text=_(OVER_ALL_INCOMES, user.lang, round(overall_result)),
             parse_mode=ParseMode.MARKDOWN,
         )
