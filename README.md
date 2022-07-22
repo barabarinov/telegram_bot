@@ -1,11 +1,10 @@
-# Python Wallet Tracker Telegram bot
+# Python-Wallet-Tracker-Telegram-bot
 
 ---
-### Calculation of expenses and incomes
+### Calculation of expenses and income
 
 ---
-I have tried many similar applications but they all are uncomfortable to use, so I created my own. The bot has Main Menu with seven buttons. You can create yours own categories of incomes and expenses. And  than to add names and costs of income/expense to these categories. Also you can put on display the current amount of expenses/incomes separately for each category and the total current amount of expenses/incomes of all categories, by one command. Every 1st day of a new month, the bot sends a general report of expenses/incomes. Implemented the ability to switch between three languages ​​(en, uk, ru). Every day at 15:00 a reminder is sent to all users to note expenses/incomes.
-
+I have tried many similar applications but they all are uncomfortable to use, so I created my own. The bot has Main Menu with seven buttons. You can create your own categories of income and expenses and add title and amount of income/expense to these categories. Also you can put on display the current amount of expenses/income separately for each category and the total current amount of expenses/income of all categories, by one command. Every 1st day of a new month, the bot sends a general report of expenses/income. I also implemented the ability to switch between three languages (en, uk, ru). Every day at 15:00 a reminder is sent to all users to fill in new expenses/income.
 
 ---
 To install requirements run:
