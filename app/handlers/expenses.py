@@ -172,6 +172,6 @@ new_expense_conversation_handler = ConversationHandler(
         ],
     },
     fallbacks=[
-        CallbackQueryHandler(cancel_creation_expense, pattern=CANCEL),
+        CallbackQueryHandler(cancel_creation_expense, pattern=CANCEL)
     ],
 )
