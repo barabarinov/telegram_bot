@@ -45,7 +45,7 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
         for group in user.groups_purchases:
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
-                f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money, 0)}_    '
+                f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money)}_    '
                 f'_{get_kyiv_timezone(purchase.creation_date, EUROPEKIEV, FMT)}_'
                 for purchase in group.purchases.filter(
                     and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
@@ -57,7 +57,7 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
             )
 
             update.message.reply_text(
-                f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result, 0))}',
+                f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result))}',
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
 
@@ -65,6 +65,6 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
             and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
         )
         update.message.reply_text(
-            text=_(OVER_ALL_EXPENSES, user.lang, round(overall_result, 0)),
+            text=_(OVER_ALL_EXPENSES, user.lang, round(overall_result)),
             parse_mode=ParseMode.MARKDOWN,
         )
