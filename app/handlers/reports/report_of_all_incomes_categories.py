@@ -51,8 +51,7 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
                 f'_{_(SIGN, user.lang)}_ _{round(income.earned_money)}_    '
                 f'_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_'
                 for income in group.incomes.filter(
-                    and_(Income.creation_date >= start, Income.creation_date <= end)
-                )
+                    and_(Income.creation_date >= start, Income.creation_date <= end)).order_by(Income.creation_date)
             )
             result = sum(income.earned_money for income in group.incomes.filter(
                 and_(Income.creation_date >= start, Income.creation_date <= end))

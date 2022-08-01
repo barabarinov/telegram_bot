@@ -104,7 +104,7 @@ def run(token, port):
         tzinfo=pytz.timezone(EUROPEKIEV))
     )
 
-    j.run_monthly(monthly_feedback, datetime.time(10, 00, 00, tzinfo=pytz.timezone(EUROPEKIEV)), 1)
+    j.run_monthly(monthly_feedback, datetime.time(11, 0, 0, tzinfo=pytz.timezone(EUROPEKIEV)), 1)
 
     if IS_HEROKU:
         updater.start_webhook(

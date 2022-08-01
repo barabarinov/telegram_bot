@@ -48,9 +48,9 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
                 f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money)}_    '
                 f'_{get_kyiv_timezone(purchase.creation_date, EUROPEKIEV, FMT)}_'
                 for purchase in group.purchases.filter(
-                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
-                ).order_by(Purchase.creation_date)
-            )
+                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end)).order_by(
+                                                                                            Purchase.creation_date)
+                )
 
             result = sum(purchase.spent_money for purchase in group.purchases.filter(
                 and_(Purchase.creation_date >= start, Purchase.creation_date <= end))

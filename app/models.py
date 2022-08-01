@@ -93,7 +93,7 @@ class Purchase(Base):  # Expense
     title = Column(String(64), nullable=False)
     spent_money = Column(DECIMAL, nullable=False)
     creation_date = Column(
-        DateTime, nullable=False, default=datetime.datetime.now
+        DateTime, nullable=False, default=datetime.datetime.utcnow()
     )
 
     def __repr__(self):
