@@ -47,13 +47,13 @@ def register_user_handler(update: Update, context: CallbackContext):
                 last_name=update.effective_user.last_name,
                 lang=update.effective_user.language_code,
             )
-            logger.info(f'USERLANG REGISTER USER IS *****{user.lang}*****')
             session.add(user)
 
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
                 text=_(REGISTERED, user.lang, user.username)
-                if update.effective_user.username is not None else _(REGISTERED, user.lang, _(INCOGNITO, user.lang)),
+                if update.effective_user.username is not None
+                else _(REGISTERED, user.lang, _(INCOGNITO, user.lang)),
                 reply_markup=reply_keyboard_main_menu(update, context, user.lang),
             )
 
@@ -75,8 +75,17 @@ def register_user_handler(update: Update, context: CallbackContext):
         else:
             context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=(_(ALREADY_REGISTERED, find_user_lang(update),
-                    update.effective_user.username if update.effective_user.username is not None else _(INCOGNITO, find_user_lang(update))) +
-                    _(STOP_IT, find_user_lang(update))),
-                reply_markup=reply_keyboard_main_menu(update, context, find_user_lang(update)),
+                text=(
+                    _(
+                        ALREADY_REGISTERED,
+                        find_user_lang(update),
+                        update.effective_user.username
+                        if update.effective_user.username is not None
+                        else _(INCOGNITO, find_user_lang(update)),
+                    )
+                    + _(STOP_IT, find_user_lang(update))
+                ),
+                reply_markup=reply_keyboard_main_menu(
+                    update, context, find_user_lang(update)
+                ),
             )

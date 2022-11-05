@@ -16,18 +16,20 @@ from app.translate import (
 
 logger = logging.getLogger(__name__)
 
-ENGLISH = 'en'
-UKRAINIAN = 'uk'
-RUSSIAN = 'ru'
-LANGUAGE = 'en|uk|ru'
-FLAGS = {'uk': '🇺🇦', 'en': '🇬🇧', 'ru': '🏳️'}
+ENGLISH = "en"
+UKRAINIAN = "uk"
+RUSSIAN = "ru"
+LANGUAGE = "en|uk|ru"
+FLAGS = {"uk": "🇺🇦", "en": "🇬🇧", "ru": "🏳️"}
 
 
 def change_language_button(update: Update, context: CallbackContext):
     reply_keyboard_lang = [
-        [InlineKeyboardButton('🇺🇦 UA', callback_data=UKRAINIAN),
-         InlineKeyboardButton('🇬🇧 EN', callback_data=ENGLISH),
-         InlineKeyboardButton('🏳️ RU', callback_data=RUSSIAN)]
+        [
+            InlineKeyboardButton("🇺🇦 UA", callback_data=UKRAINIAN),
+            InlineKeyboardButton("🇬🇧 EN", callback_data=ENGLISH),
+            InlineKeyboardButton("🏳️ RU", callback_data=RUSSIAN),
+        ]
     ]
     reply_keyboard_language = InlineKeyboardMarkup(reply_keyboard_lang)
 
@@ -45,10 +47,7 @@ def change_to_eng_uk_or_ru(update: Update, context: CallbackContext):
         user = session.query(User).get(update.effective_user.id)
         query = update.callback_query
         user.lang = query.data
-        logger.info(f'query.data *****{query.data}*****')
         session.commit()
-
-        logger.info(f'callback_query ########{update.callback_query}########')
         query.answer()
 
         context.bot.send_message(
@@ -61,13 +60,16 @@ def change_to_eng_uk_or_ru(update: Update, context: CallbackContext):
 
 
 change_language_handler = ConversationHandler(
-    entry_points=[MessageHandler(
-        Filters.regex('^🇬🇧 Language|🏳️ Язык|🇺🇦 Мова$') & ~Filters.command, change_language_button
-    )],
+    entry_points=[
+        MessageHandler(
+            Filters.regex("^🇬🇧 Language|🏳️ Язык|🇺🇦 Мова$") & ~Filters.command,
+            change_language_button,
+        )
+    ],
     states={
         1: [
             CallbackQueryHandler(change_to_eng_uk_or_ru, pattern=LANGUAGE),
-           ],
+        ],
     },
     fallbacks=[],
 )

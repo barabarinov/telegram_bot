@@ -61,16 +61,27 @@ def month_name(user, last_month):
 
 
 def get_monthly_report_start_end(user):
-    logger.info(f'USER IS: {user}')
     now = datetime.datetime.now()
     _thing, days_in_previous_month = monthrange(now.year, now.month - 1)
-    logger.info(f'>>> DAYS IN PREVIOUS MONTH = {days_in_previous_month} <<<')
     if now.month == 1:
-        start = datetime.datetime(now.year - 1, month=12, day=1, hour=00, minute=00, second=00)
-        end = datetime.datetime(now.year - 1, month=12, day=31, hour=23, minute=59, second=59)
+        start = datetime.datetime(
+            now.year - 1, month=12, day=1, hour=00, minute=00, second=00
+        )
+        end = datetime.datetime(
+            now.year - 1, month=12, day=31, hour=23, minute=59, second=59
+        )
     else:
-        start = datetime.datetime(now.year, now.month - 1, day=1, hour=00, minute=00, second=00)
-        end = datetime.datetime(now.year, now.month - 1, day=days_in_previous_month, hour=23, minute=59, second=59)
+        start = datetime.datetime(
+            now.year, now.month - 1, day=1, hour=00, minute=00, second=00
+        )
+        end = datetime.datetime(
+            now.year,
+            now.month - 1,
+            day=days_in_previous_month,
+            hour=23,
+            minute=59,
+            second=59,
+        )
 
     return start, end, now.month - 1
 
@@ -79,11 +90,16 @@ def monthly_feedback(context: CallbackContext):
     with Session() as session:
         for user in session.query(User).filter(User.enable_monthly_report == True):
             start, end, last_month = get_monthly_report_start_end(user)
-            logger.info(f'LAST MONTH >>> {last_month}')
             try:
                 context.bot.send_message(
                     chat_id=user.telegram_id,
-                    text=(_(YOUR_MONTHLY_EXPENSES, user.lang, month_name(user, last_month))),
+                    text=(
+                        _(
+                            YOUR_MONTHLY_EXPENSES,
+                            user.lang,
+                            month_name(user, last_month),
+                        )
+                    ),
                     parse_mode=ParseMode.MARKDOWN,
                 )
             except telegram.error.Unauthorized:
@@ -97,11 +113,18 @@ def monthly_feedback(context: CallbackContext):
                     f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money)}_    '
                     f'_{get_kyiv_timezone(purchase.creation_date, EUROPEKIEV, FMT)}_'
                     for purchase in group.purchases.filter(
-                        and_(Purchase.creation_date >= start, Purchase.creation_date <= end)).order_by(
-                                                                                                Purchase.creation_date)
+                        and_(Purchase.creation_date >= start,
+                             Purchase.creation_date <= end)
+                    ).order_by(Purchase.creation_date)
                 )
-                result = sum(purchase.spent_money for purchase in group.purchases.filter(
-                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+                result = sum(
+                    purchase.spent_money
+                    for purchase in group.purchases.filter(
+                        and_(
+                            Purchase.creation_date >= start,
+                            Purchase.creation_date <= end,
+                        )
+                    )
                 )
                 try:
                     context.bot.send_message(
@@ -114,8 +137,14 @@ def monthly_feedback(context: CallbackContext):
                 else:
                     logger.info(f'User {user.username} {user.telegram_id} sent message')
 
-                overall_result = sum(purchase.spent_money for purchase in user.purchases.filter(
-                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+                overall_result = sum(
+                    purchase.spent_money
+                    for purchase in user.purchases.filter(
+                        and_(
+                            Purchase.creation_date >= start,
+                            Purchase.creation_date <= end,
+                        )
+                    )
                 )
             try:
                 context.bot.send_message(
@@ -131,7 +160,9 @@ def monthly_feedback(context: CallbackContext):
             try:
                 context.bot.send_message(
                     chat_id=user.telegram_id,
-                    text=(_(YOUR_MONTHLY_INCOME, user.lang, month_name(user, last_month))),
+                    text=(
+                        _(YOUR_MONTHLY_INCOME, user.lang, month_name(user, last_month))
+                    ),
                     parse_mode=ParseMode.MARKDOWN,
                 )
             except telegram.error.Unauthorized:
@@ -145,10 +176,14 @@ def monthly_feedback(context: CallbackContext):
                     f'_{_(SIGN, user.lang)}_ _{round(income.earned_money)}_    '
                     f'_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_'
                     for income in group.incomes.filter(
-                        and_(Income.creation_date >= start, Income.creation_date <= end)).order_by(Income.creation_date)
+                        and_(Income.creation_date >= start, Income.creation_date <= end)
+                    ).order_by(Income.creation_date)
                 )
-                result = sum(income.earned_money for income in group.incomes.filter(
-                    and_(Income.creation_date >= start, Income.creation_date <= end))
+                result = sum(
+                    income.earned_money
+                    for income in group.incomes.filter(
+                        and_(Income.creation_date >= start, Income.creation_date <= end)
+                    )
                 )
                 try:
                     context.bot.send_message(
@@ -161,8 +196,11 @@ def monthly_feedback(context: CallbackContext):
                 else:
                     logger.info(f'User {user.username} {user.telegram_id} sent message')
 
-                overall_result = sum(income.earned_money for income in user.incomes.filter(
-                    and_(Income.creation_date >= start, Income.creation_date <= end))
+                overall_result = sum(
+                    income.earned_money
+                    for income in user.incomes.filter(
+                        and_(Income.creation_date >= start, Income.creation_date <= end)
+                    )
                 )
             try:
                 context.bot.send_message(

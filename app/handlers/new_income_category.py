@@ -39,13 +39,15 @@ def new_income_category(update: Update, context: CallbackContext):
 
 
 def get_new_income_category_name(update: Update, context: CallbackContext):
-    context.user_data['name'] = update.message.text
-    logger.info(f'NAME IS HERE {context.user_data["name"]}')
-    logger.info(f'CONTEXT = {context}')
+    context.user_data["name"] = update.message.text
 
     reply_keyboard = [
-        [InlineKeyboardButton(_(YES, find_user_lang(update)), callback_data=CALLBACK_YES),
-         InlineKeyboardButton(_(NO, find_user_lang(update)), callback_data=CANCEL)]
+        [
+            InlineKeyboardButton(
+                _(YES, find_user_lang(update)), callback_data=CALLBACK_YES
+            ),
+            InlineKeyboardButton(_(NO, find_user_lang(update)), callback_data=CANCEL),
+        ]
     ]
     reply_keyboard_yes_or_no = InlineKeyboardMarkup(reply_keyboard)
 
@@ -62,7 +64,7 @@ def create_income_category(update: Update, context: CallbackContext):
     with Session() as session:
         user_new_income_group = GroupIncome(
             user_id=update.effective_user.id,
-            name=context.user_data['name'],
+            name=context.user_data["name"],
         )
         session.add(user_new_income_group)
         session.commit()
@@ -95,12 +97,20 @@ def cancel_income_creation_category(update: Update, context: CallbackContext):
 
 new_income_category_conversation_handler = ConversationHandler(
     entry_points=[
-        MessageHandler(Filters.regex(
-            '(Create new income category|Створити категорію доходу|Создать категорию дохода)'
-        ) & ~Filters.command, new_income_category)
+        MessageHandler(
+            Filters.regex(
+                "(Create new income category|Створити категорію доходу|Создать категорию дохода)"
+            )
+            & ~Filters.command,
+            new_income_category,
+        )
     ],
     states={
-        NewIncomeGroup.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_income_category_name)],
+        NewIncomeGroup.NAME: [
+            MessageHandler(
+                Filters.text & ~Filters.command, get_new_income_category_name
+            )
+        ],
         NewIncomeGroup.CONFIRM: [
             CallbackQueryHandler(create_income_category, pattern=CALLBACK_YES)
         ],

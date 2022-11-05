@@ -22,7 +22,6 @@ from app.translate import (
     TOTAL,
     SIGN,
     OVER_ALL_INCOMES,
-
 )
 
 logger = logging.getLogger(__name__)
@@ -48,22 +47,29 @@ def get_sum_of_all_incomes_categories(update: Update, context: CallbackContext):
         for group in user.groups_incomes:
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in income.title])}_: '
-                f'_{_(SIGN, user.lang)}_ _{round(income.earned_money)}_    '
-                f'_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_'
+                f"_{_(SIGN, user.lang)}_ _{round(income.earned_money)}_    "
+                f"_{get_kyiv_timezone(income.creation_date, EUROPEKIEV, FMT)}_"
                 for income in group.incomes.filter(
-                    and_(Income.creation_date >= start, Income.creation_date <= end)).order_by(Income.creation_date)
+                    and_(Income.creation_date >= start, Income.creation_date <= end)
+                ).order_by(Income.creation_date)
             )
-            result = sum(income.earned_money for income in group.incomes.filter(
-                and_(Income.creation_date >= start, Income.creation_date <= end))
+            result = sum(
+                income.earned_money
+                for income in group.incomes.filter(
+                    and_(Income.creation_date >= start, Income.creation_date <= end)
+                )
             )
 
             update.message.reply_text(
-                f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result))}',
+                f"*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result))}",
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
 
-        overall_result = sum(income.earned_money for income in user.incomes.filter(
-            and_(Income.creation_date >= start, Income.creation_date <= end))
+        overall_result = sum(
+            income.earned_money
+            for income in user.incomes.filter(
+                and_(Income.creation_date >= start, Income.creation_date <= end)
+            )
         )
         update.message.reply_text(
             text=_(OVER_ALL_INCOMES, user.lang, round(overall_result)),

@@ -22,7 +22,7 @@ from app.translate import (
 
 logger = logging.getLogger(__name__)
 
-CALLBACK_YES = 'yes'
+CALLBACK_YES = "yes"
 
 
 class NewExpenseCategory(IntEnum):
@@ -40,13 +40,15 @@ def new_expense_category(update: Update, context: CallbackContext):
 
 
 def get_new_expense_category_name(update: Update, context: CallbackContext):
-    context.user_data['name'] = update.message.text
-    logger.info(f'NAME IS HERE {context.user_data["name"]}')
-    logger.info(f'CONTEXT = {context}')
+    context.user_data["name"] = update.message.text
 
     reply_keyboard = [
-        [InlineKeyboardButton(_(YES, find_user_lang(update)), callback_data=CALLBACK_YES),
-         InlineKeyboardButton(_(NO, find_user_lang(update)), callback_data=CANCEL)]
+        [
+            InlineKeyboardButton(
+                _(YES, find_user_lang(update)), callback_data=CALLBACK_YES
+            ),
+            InlineKeyboardButton(_(NO, find_user_lang(update)), callback_data=CANCEL),
+        ]
     ]
     reply_keyboard_yes_or_no = InlineKeyboardMarkup(reply_keyboard)
 
@@ -63,7 +65,7 @@ def create_expense_category(update: Update, context: CallbackContext):
     with Session() as session:
         user_new_expense_category = GroupPurchase(
             user_id=update.effective_user.id,
-            name=context.user_data['name'],
+            name=context.user_data["name"],
         )
         session.add(user_new_expense_category)
         session.commit()
@@ -75,7 +77,9 @@ def create_expense_category(update: Update, context: CallbackContext):
     context.bot.edit_message_text(
         chat_id=query.message.chat_id,
         message_id=query.message.message_id,
-        text=_(CATEGORY_CREATED, find_user_lang(update), user_new_expense_category.name),
+        text=_(
+            CATEGORY_CREATED, find_user_lang(update), user_new_expense_category.name
+        ),
         parse_mode=ParseMode.MARKDOWN,
     )
 
@@ -95,11 +99,21 @@ def cancel_expense_creation_category(update: Update, context: CallbackContext):
 
 
 new_expense_category_conversation_handler = ConversationHandler(
-    entry_points=[MessageHandler(
-        Filters.regex(
-            '(Create new expense category|Створити категорію витрат|Создать категорию расходов)') & ~Filters.command, new_expense_category)],
+    entry_points=[
+        MessageHandler(
+            Filters.regex(
+                "(Create new expense category|Створити категорію витрат|Создать категорию расходов)"
+            )
+            & ~Filters.command,
+            new_expense_category,
+        )
+    ],
     states={
-        NewExpenseCategory.NAME: [MessageHandler(Filters.text & ~Filters.command, get_new_expense_category_name)],
+        NewExpenseCategory.NAME: [
+            MessageHandler(
+                Filters.text & ~Filters.command, get_new_expense_category_name
+            )
+        ],
         NewExpenseCategory.CONFIRM: [
             CallbackQueryHandler(create_expense_category, pattern=CALLBACK_YES),
         ],

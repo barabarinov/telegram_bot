@@ -18,7 +18,7 @@ from app.translate import (
 
 logger = logging.getLogger(__name__)
 
-NEW_LINE = '\n'
+NEW_LINE = "\n"
 SLASH = "\\"
 CHARACTERS = "_*[]()~>#+-=|{}.!"
 EUROPEKIEV = "Europe/Kiev"
@@ -38,31 +38,36 @@ def get_sum_of_all_expenses_categories(update: Update, context: CallbackContext)
         start, end = get_start_end_of_current_report_of_all_expenses()
 
         update.message.reply_text(
-            text=_(REPORT_EXPENSE_CATEGORIES, user.lang),
-            parse_mode=ParseMode.MARKDOWN
-        ),
+            text=_(REPORT_EXPENSE_CATEGORIES, user.lang), parse_mode=ParseMode.MARKDOWN
+        )
 
         for group in user.groups_purchases:
             details = (
                 f'_{"".join([SLASH + i if i in CHARACTERS else i for i in purchase.title])}_: '
-                f'_{_(SIGN, user.lang)}_ _{round(purchase.spent_money)}_    '
-                f'_{get_kyiv_timezone(purchase.creation_date, EUROPEKIEV, FMT)}_'
+                f"_{_(SIGN, user.lang)}_ _{round(purchase.spent_money)}_    "
+                f"_{get_kyiv_timezone(purchase.creation_date, EUROPEKIEV, FMT)}_"
                 for purchase in group.purchases.filter(
-                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end)).order_by(
-                                                                                            Purchase.creation_date)
-                )
+                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
+                ).order_by(Purchase.creation_date)
+            )
 
-            result = sum(purchase.spent_money for purchase in group.purchases.filter(
-                and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+            result = sum(
+                purchase.spent_money
+                for purchase in group.purchases.filter(
+                    and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
+                )
             )
 
             update.message.reply_text(
-                f'*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result))}',
+                f"*{group.name}*:\n{NEW_LINE.join(details)}\n{_(TOTAL, user.lang, round(result))}",
                 parse_mode=ParseMode.MARKDOWN_V2,
             )
 
-        overall_result = sum(purchase.spent_money for purchase in user.purchases.filter(
-            and_(Purchase.creation_date >= start, Purchase.creation_date <= end))
+        overall_result = sum(
+            purchase.spent_money
+            for purchase in user.purchases.filter(
+                and_(Purchase.creation_date >= start, Purchase.creation_date <= end)
+            )
         )
         update.message.reply_text(
             text=_(OVER_ALL_EXPENSES, user.lang, round(overall_result)),
