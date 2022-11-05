@@ -58,8 +58,8 @@ def last_month_report(update: Update, context: CallbackContext):
                         and_(
                             Purchase.creation_date >= start,
                             Purchase.creation_date <= end
-                        ).order_by(Purchase.creation_date)
-                    )
+                        )
+                    ).order_by(Purchase.creation_date)
                 )
                 result = sum(
                     purchase.spent_money
