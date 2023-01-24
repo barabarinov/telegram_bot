@@ -1,13 +1,9 @@
+import datetime
+
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, DECIMAL
 from sqlalchemy.orm import declarative_base, relationship
-import datetime
-from app.translate import (
-    gettext as _,
-    DISPLAY_INCOME,
-    DISPLAY_EXPENSE,
-)
 
-from app.translate import DEFAULT
+from app.translate import DEFAULT_LANG
 
 FMT = "%H:%M    %d/%m/%Y"
 
@@ -22,7 +18,7 @@ class User(Base):
     first_name = Column(String, nullable=True)
     last_name = Column(String, nullable=True)
     enable_monthly_report = Column(Boolean, default=True)
-    lang = Column(String, nullable=False, default=DEFAULT)
+    lang = Column(String, nullable=False, default=DEFAULT_LANG)
 
     incomes = relationship(
         "Income",
@@ -42,6 +38,7 @@ class User(Base):
         "GroupPurchase",
         back_populates="user",
         cascade="all, delete",
+        lazy="dynamic",
         passive_deletes=True,
     )
     groups_incomes = relationship(
@@ -52,7 +49,7 @@ class User(Base):
     )
 
     def __repr__(self):
-        return f"User with telegram id: {self.telegram_id}"
+        return f"User[id={self.telegram_id}]"
 
 
 class GroupPurchase(Base):
@@ -70,7 +67,7 @@ class GroupPurchase(Base):
     )
 
     def __repr__(self):
-        return f"Category of Expenses: {self.name}"
+        return f"GroupPurchases[name={self.name}]"
 
 
 class GroupIncome(Base):
@@ -84,7 +81,7 @@ class GroupIncome(Base):
     incomes = relationship("Income", back_populates="group", lazy="dynamic")
 
     def __repr__(self):
-        return f"Category of Incomes: {self.name}"
+        return f"GroupIncome[name={self.name}]"
 
 
 class Purchase(Base):
@@ -100,23 +97,20 @@ class Purchase(Base):
     group = relationship(
         "GroupPurchase", back_populates="purchases"
     )
-
     title = Column(String(64), nullable=False)
     spent_money = Column(DECIMAL, nullable=False)
     creation_date = Column(DateTime, nullable=False, default=datetime.datetime.utcnow())
 
     def __repr__(self):
-        return f"Expense #{self.id}: {self.title[:20]}"
+        return f"Purchase[id={self.id}, title={self.title[:20]}]"
 
-    def display_expense(self, lang):
-        return _(
-            DISPLAY_EXPENSE,
-            lang,
+    def display_expense(self):
+        return [
             self.title,
             self.spent_money,
             self.group.name if self.group else None,
-            self.creation_date.strftime(FMT),
-        )
+            self.creation_date.strftime(FMT)
+        ]
 
 
 class Income(Base):
@@ -132,20 +126,17 @@ class Income(Base):
     group = relationship(
         "GroupIncome", back_populates="incomes"
     )
-
     title = Column(String(64), nullable=False)
     earned_money = Column(DECIMAL, nullable=False)
     creation_date = Column(DateTime, nullable=False, default=datetime.datetime.now)
 
     def __repr__(self):
-        return f"Income #{self.id}: {self.title[:20]}"
+        return f"Income[id={self.id}, title={self.title[:20]}]"
 
-    def display_income(self, lang):
-        return _(
-            DISPLAY_INCOME,
-            lang,
+    def display_income(self):
+        return [
             self.title,
             self.earned_money,
             self.group.name if self.group else None,
             self.creation_date.strftime(FMT),
-        )
+        ]

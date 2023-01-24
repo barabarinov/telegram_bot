@@ -1,20 +1,23 @@
 import datetime
-import pytz
 import logging
 from enum import auto, IntEnum
 
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
+import pytz
+from telegram import Update
 from telegram.ext import CallbackContext, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
-from app.handlers.find_user_lang_or_id import find_user_lang
-from app.handlers.expenses import CANCEL, CALLBACK_SAVE
 
 from app.db import Session
-from app.buttons import reply_keyboard_cancel
-from app.models import User, Income, GroupIncome
-from app.handlers.reports.report_of_all_expenses_categories import EUROPEKIEV
+from app.handlers.get_user import get_effective_user
+from app.message import (
+    Message,
+    escape,
+    bold,
+    italic,
+)
+from app.handlers.reports.report_expenses_categories import EUROPEKIEV
+from app.models import Income, GroupIncome
 from app.translate import (
-    gettext as _,
     INCOME_TITLE,
     HOW_MUCH_EARN,
     SELECT_CATEGORY,
@@ -23,8 +26,9 @@ from app.translate import (
     THATS_YOUR_INCOME,
     INCOME_ADDED,
     SEEYA,
-    CANCEL_THIS,
+    CANCEL,
     WRONG_VALUE,
+    DISPLAY_INCOME,
 )
 
 logger = logging.getLogger(__name__)
@@ -37,67 +41,63 @@ class NewIncome(IntEnum):
     CONFIRM = auto()
 
 
-def new_income(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        text=_(INCOME_TITLE, find_user_lang(update)),
-        reply_markup=reply_keyboard_cancel(update, context, CANCEL),
-        parse_mode=ParseMode.MARKDOWN,
-    )
+def new_income(update: Update, context: CallbackContext) -> NewIncome:
+    with Session() as session:
+        user = get_effective_user(update, session)
+        context.user_data["user_lang"] = user.lang
+
+        message = Message(update=update, language=user.lang)
+        button = message.add(INCOME_TITLE).create_inline_button(text=CANCEL)
+        message.add_inline_buttons([button])
+        message.reply()
 
     return NewIncome.TITLE
 
 
-def get_income_title(update: Update, context: CallbackContext):
+def get_income_title(update: Update, context: CallbackContext) -> NewIncome:
     context.user_data["title"] = update.message.text
-    update.message.reply_text(
-        text=_(HOW_MUCH_EARN, find_user_lang(update)),
-        reply_markup=reply_keyboard_cancel(update, context, CANCEL),
-        parse_mode=ParseMode.MARKDOWN,
-    )
+
+    message = Message(update=update, language=context.user_data["user_lang"])
+    button = message.add(HOW_MUCH_EARN).create_inline_button(text=CANCEL)
+    message.add_inline_buttons([button])
+    message.reply()
 
     return NewIncome.EARNED_MONEY
 
 
-def get_income_earned_money(update: Update, context: CallbackContext):
+def get_income_earned_money(update: Update, context: CallbackContext) -> NewIncome:
     try:
         context.user_data["earned_money"] = float(update.message.text.replace(" ", ""))
     except ValueError:
-        context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=_(WRONG_VALUE, find_user_lang(update)),
-            reply_markup=reply_keyboard_cancel(update, context, CANCEL),
-        )
+        message = Message(update=update, language=context.user_data["user_lang"])
+        message.add(WRONG_VALUE, formatters=[escape])
+        message.reply()
 
         return NewIncome.EARNED_MONEY
 
     with Session() as session:
-        user = session.query(User).get(update.effective_user.id)
-        update.message.reply_text(
-            text=_(SELECT_CATEGORY, user.lang),
-            reply_markup=InlineKeyboardMarkup.from_column(
+        user = get_effective_user(update, session)
+        message = Message(update=update, language=user.lang)
+        message.add(SELECT_CATEGORY, formatters=[escape])
+
+        for group in user.groups_incomes:
+            message.add_inline_buttons(
                 [
-                    InlineKeyboardButton(
-                        text=group.name, callback_data=f"set-income-category${group.id}"
-                    )
-                    for group in user.groups_incomes
+                    message.create_inline_button(text=group.name, callback_id=f"set-income-category${group.id}")
                 ]
-                + [
-                    InlineKeyboardButton(
-                        _(CANCEL_THIS, find_user_lang(update)), callback_data=CANCEL
-                    )
-                ]
-            ),
-        )
+            )
+        cancel_button = message.create_inline_button(text=CANCEL)
+        message.add_inline_buttons([cancel_button])
+        message.reply()
 
         return NewIncome.CHOOSE_CATEGORY
 
 
-def get_income_category_callback(update: Update, context: CallbackContext):
-    update.callback_query.answer()
-
+def get_income_category_callback(update: Update, context: CallbackContext) -> NewIncome:
     _other, group_id = update.callback_query.data.split("$")
     group_id = int(group_id)
     context.user_data["group_id"] = group_id
+
     with Session() as session:
         category = session.query(GroupIncome).get(group_id)
 
@@ -107,29 +107,13 @@ def get_income_category_callback(update: Update, context: CallbackContext):
         creation_date=datetime.datetime.now(tz=pytz.timezone(EUROPEKIEV)),
         group=category,
     )
-
-    reply_keyboard_save = [
-        [
-            InlineKeyboardButton(
-                _(SAVE, find_user_lang(update)), callback_data=CALLBACK_SAVE
-            ),
-            InlineKeyboardButton(
-                _(DONT_SAVE, find_user_lang(update)), callback_data=CANCEL
-            ),
-        ]
-    ]
-
-    reply_keyboard_save_dontsave = InlineKeyboardMarkup(reply_keyboard_save)
-
-    update.effective_message.reply_text(
-        _(
-            THATS_YOUR_INCOME,
-            find_user_lang(update),
-            income.display_income(find_user_lang(update)),
-        ),
-        reply_markup=reply_keyboard_save_dontsave,
-        parse_mode=ParseMode.MARKDOWN,
-    )
+    message = Message(update=update, language=context.user_data["user_lang"])
+    message.add(THATS_YOUR_INCOME, formatters=[escape, bold]).add_newline()
+    message.add(DISPLAY_INCOME, *[escape(item) for item in income.display_income()], formatters=[italic])
+    save = message.create_inline_button(text=SAVE)
+    cancel = message.create_inline_button(text=DONT_SAVE, callback_id=CANCEL)
+    message.add_inline_buttons([save, cancel])
+    message.reply()
 
     return NewIncome.CONFIRM
 
@@ -146,28 +130,17 @@ def create_income(update: Update, context: CallbackContext):
         session.add(user_new_income)
         session.commit()
 
-        query = update.callback_query
-        query.answer()
-
-    context.bot.edit_message_text(
-        chat_id=query.message.chat_id,
-        message_id=query.message.message_id,
-        text=(_(INCOME_ADDED, find_user_lang(update))),
-        parse_mode=ParseMode.MARKDOWN,
-    )
+        message = Message(update=update, context=context, language=context.user_data["user_lang"])
+        message.add(INCOME_ADDED, formatters=[escape])
+        message.edit_message_text()
 
     return ConversationHandler.END
 
 
 def cancel_creation_income(update: Update, context: CallbackContext):
-    query = update.callback_query
-    query.answer()
-
-    context.bot.edit_message_text(
-        chat_id=query.message.chat_id,
-        message_id=query.message.message_id,
-        text=_(SEEYA, find_user_lang(update)),
-    )
+    message = Message(update=update, context=context, language=context.user_data["user_lang"])
+    message.add(SEEYA, formatters=[escape])
+    message.edit_message_text()
 
     return ConversationHandler.END
 
@@ -194,7 +167,7 @@ new_income_conversation_handler = ConversationHandler(
             CallbackQueryHandler(cancel_creation_income, pattern=CANCEL),
         ],
         NewIncome.CONFIRM: [
-            CallbackQueryHandler(create_income, pattern=CALLBACK_SAVE),
+            CallbackQueryHandler(create_income, pattern=SAVE),
         ],
     },
     fallbacks=[

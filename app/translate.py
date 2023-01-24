@@ -1,24 +1,20 @@
-import logging
-
-logger = logging.getLogger(__name__)
-
 RU = "ru"
 EN = "en"
 UK = "uk"
-DEFAULT = EN
+DEFAULT_LANG = EN
 
 # main menu
 CREATE_NEW_EXPENSE = "create new expense"
 CREATE_EXPENSE_CATEGORY = "create new expense category"
-ALL_EXPENSES = "see all expenses"
+ALL_EXPENSES = "all expenses"
 CREATE_NEW_INCOME = "create new income"
 CREATE_INCOME_CATEGORY = "create new income category"
-ALL_INCOMES = "see all incomes"
-LAST_MONTH = "see statistic of last month"
+ALL_INCOMES = "all income"
+LAST_MONTH = "statistic of last month"
 LANGUAGE_NAME = "language name"
 
 # Registration
-REGISTERED = "register"
+REGISTERED = "registered"
 INCOGNITO = "incognito"
 ALREADY_REGISTERED = "already registered"
 STOP_IT = "stop it"
@@ -35,7 +31,7 @@ WRONG_VALUE = "Enter the only digits"
 
 # Create income
 INCOME_TITLE = "income title"
-HOW_MUCH_EARN = "how much did you earn"
+HOW_MUCH_EARN = "how much did you earn?"
 SELECT_CATEGORY = "select group"
 THATS_YOUR_INCOME = "That's your income"
 DISPLAY_INCOME = "display income"
@@ -44,20 +40,20 @@ SEEYA = "See ya"
 
 # Create expense
 EXPENSE_TITLE = "expence title"
-HOW_MUCH_SPEND = "how much did you spend"
+HOW_MUCH_SPEND = "how much did you spent?"
 THATS_YOUR_EXPENSE = "that's your expence"
 DISPLAY_EXPENSE = "display expense"
-EXPENSE_ADDED = "expence added"
+EXPENSE_ADDED = "expense added"
 
-SAVE = "savesave"
-DONT_SAVE = "don't savesave"
+SAVE = "save"
+DONT_SAVE = "dont save"
 
-ONCE_MESSAGE = "Special message for all users"
-DAILY_MESSAGE = "Don’t forget to fill in your expenses and incomes for today!"
+ONCE_MESSAGE = "once message for all users"
+DAILY_MESSAGE = "reminder"
 
 # Monthly expense/income report
-YOUR_MONTHLY_EXPENSES = "your monthly expenses"
-YOUR_MONTHLY_INCOME = "your monthly income"
+MONTHLY_EXPENSES_TITLE = "your monthly expenses"
+MONTHLY_INCOME_TITLE = "your monthly income"
 
 # Months
 JANUARY = "January"
@@ -74,26 +70,25 @@ NOVEMBER = "November"
 DECEMBER = "December"
 
 # Current expense/income report
-REPORT_INCOME_CATEGORIES = "Sum of incomes in categories"
-REPORT_EXPENSE_CATEGORIES = "Sum of expense in categories"
+REPORT_INCOME_TITLE = "Sum of income in categories"
+REPORT_EXPENSE_TITLE = "Sum of expense in categories"
 TOTAL = "total"
-OVER_ALL_INCOMES = "overall incomes"
-OVER_ALL_EXPENSES = "overall expenses"
-SIGN = "$ ₴"
+OVERALL = "overall expenses/incomes"
+SIGN = "money sign"
 
 # Create expense/income category
-NAME_INCOME_CATEGORY = "Enter name of the new income category!"
-NAME_EXPENSE_CATEGORY = "Enter name of the new expense category!"
-IS_CORRECT = "The name for new category is correct?"
-YES = "YES"
-NO = "NO"
-CATEGORY_CREATED = "The category was created!"
+NAME_INCOME_CATEGORY = "name of the new income category!"
+NAME_EXPENSE_CATEGORY = "name of the new expense category!"
+IS_CORRECT = "check category name"
+YES = "yes!"
+NO = "no!"
+CATEGORY_CREATED = "created"
 
 # Translation
-CHANGE_LANG = "Change language"
-YOUR_LANG_CHANGED = "Language change to..."
+CHANGE_LANG = "change language"
+LANG_CHANGED = "lang changed to..."
 
-CANCEL_THIS = "cancel translation"
+CANCEL = "cancel it"
 
 TRANSLATES = {
     REGISTERED: {
@@ -187,9 +182,9 @@ TRANSLATES = {
         EN: "🇬🇧 Language",
     },
     WRONG_VALUE: {
-        UK: "😬 Упс! Це не цифри! Спробуйте ще раз!",
-        RU: "😬 Упс! Это не цифры! Попробуйте еще раз!",
-        EN: "😬 Oops! Use the digits! Try again!",
+        UK: "😬 Упс! Це не цифри!",
+        RU: "😬 Упс! Это не цифры!",
+        EN: "😬 Oops! Use the digits!",
     },
     INCOME_TITLE: {
         UK: "Введіть назву доходу:",
@@ -208,25 +203,28 @@ TRANSLATES = {
     },
     DISPLAY_INCOME: {
         UK: (
-            "_Назва: {}\n_" "_Дохід: {}\n_" "_Категорія: {}\n_" "_Дата створення: {}_"
+            "Назва: {}\n" 
+            "Дохід: {}\n" 
+            "Категорія: {}\n" 
+            "Дата створення: {}"
         ),
         RU: (
-            "_Название: {}\n_"
-            "_Доход: {}\n_"
-            "_Категория: {}\n_"
-            "_Дата добавления: {}_"
+            "Название: {}\n"
+            "Доход: {}\n"
+            "Категория: {}\n"
+            "Дата добавления: {}"
         ),
         EN: (
-            "_Title: {}_\n"
-            "_Earned Money: {}_\n"
-            "_Category: {}_\n"
-            "_Creation Date: {}_"
+            "Title: {}\n"
+            "Earned Money: {}\n"
+            "Category: {}\n"
+            "Creation Date: {}"
         ),
     },
     THATS_YOUR_INCOME: {
-        UK: "*Це ваш дохід!*\n{}",
-        RU: "*Это ваш доход!*\n{}",
-        EN: "*That's your income!*\n{}",
+        UK: "Ваш дохід!",
+        RU: "Ваш доход!",
+        EN: "That's your income!",
     },
     INCOME_ADDED: {
         UK: "✅ Ваш дохід додано!",
@@ -249,25 +247,28 @@ TRANSLATES = {
         EN: "How much did you spend?",
     },
     THATS_YOUR_EXPENSE: {
-        UK: "*Ваша витрата!*\n{}",
-        RU: "*Ваш расход!*\n{}",
-        EN: "*That's your expense!*\n{}",
+        UK: "Ваша витрата!",
+        RU: "Ваш расход!",
+        EN: "That's your expense!",
     },
     DISPLAY_EXPENSE: {
         UK: (
-            "_Назва: {}\n_" "_Витрата: {}\n_" "_Категорія: {}\n_" "_Дата створення: {}_"
+            "Назва: {}\n" 
+            "Витрата: {}\n" 
+            "Категорія: {}\n" 
+            "Дата створення: {}"
         ),
         RU: (
-            "_Название: {}_\n"
-            "_Расход: {}_\n"
-            "_Категория: {}_\n"
-            "_Дата добавления: {}_"
+            "Название: {}\n"
+            "Расход: {}\n"
+            "Категория: {}\n"
+            "Дата добавления: {}"
         ),
         EN: (
-            "_Title: {}_\n"
-            "_Spent Money: {}_\n"
-            "_Category: {}_\n"
-            "_Creation Date: {}_"
+            "Title: {}\n"
+            "Spent Money: {}\n"
+            "Category: {}\n"
+            "Creation Date: {}"
         ),
     },
     EXPENSE_ADDED: {
@@ -310,15 +311,15 @@ TRANSLATES = {
         RU: "💭 Не забудьте внести свои доходы и расходы за сегодня!",
         EN: "💭 Don’t forget to enter your incomes and expenses for today!",
     },
-    YOUR_MONTHLY_INCOME: {
-        UK: "🟩 *Звіт по доходах за {}:*",
-        RU: "🟩 *Отчет по доходам за {}:*",
-        EN: "🟩 *Report on income for {}:*",
+    MONTHLY_INCOME_TITLE: {
+        UK: "🟩 Звіт по доходах за {}:",
+        RU: "🟩 Отчет по доходам за {}:",
+        EN: "🟩 Report on income for {}:",
     },
-    YOUR_MONTHLY_EXPENSES: {
-        UK: "🟥 *Звіт по витратах за {}:*",
-        RU: "🟥 *Отчет по расходам за {}:*",
-        EN: "🟥 *Report on expenses for {}:*",
+    MONTHLY_EXPENSES_TITLE: {
+        UK: "🟥 Звіт по витратах за {}:",
+        RU: "🟥 Отчет по расходам за {}:",
+        EN: "🟥 Report on expenses for {}:",
     },
     JANUARY: {
         UK: "Січень",
@@ -380,30 +381,25 @@ TRANSLATES = {
         RU: "Декабрь",
         EN: "December",
     },
-    REPORT_INCOME_CATEGORIES: {
-        UK: "*Сума доходів по категоріям:*",
-        RU: "*Сумма доходов по категориям:*",
-        EN: "*Sum of incomes in categories:*",
+    REPORT_INCOME_TITLE: {
+        UK: "Сума доходів по категоріям:",
+        RU: "Сумма доходов по категориям:",
+        EN: "Sum of incomes in categories:",
     },
-    REPORT_EXPENSE_CATEGORIES: {
-        UK: "*Сума витрат по категоріям:*",
-        RU: "*Сумма расходов по категориям:*",
-        EN: "*Sum of expenses in categories:*",
+    REPORT_EXPENSE_TITLE: {
+        UK: "Сума витрат по категоріям:",
+        RU: "Сумма расходов по категориям:",
+        EN: "Sum of expenses in categories:",
     },
     TOTAL: {
-        UK: "__Разом: ₴ {}__",
-        RU: "__Итого: ₴ {}__",
-        EN: "__Total: $ {}__",
+        UK: "Разом",
+        RU: "Итого",
+        EN: "Total",
     },
-    OVER_ALL_INCOMES: {
-        UK: "*РАЗОМ: ₴ {}*",
-        RU: "*ОБЩАЯ СУММА: ₴ {}*",
-        EN: "*TOTAL: $ {}*",
-    },
-    OVER_ALL_EXPENSES: {
-        UK: "*РАЗОМ: ₴ {}*",
-        RU: "*ОБЩАЯ СУММА: ₴ {}*",
-        EN: "*TOTAL: $ {}*",
+    OVERALL: {
+        UK: "РАЗОМ",
+        RU: "ОБЩАЯ СУММА",
+        EN: "TOTAL:",
     },
     SIGN: {
         UK: "₴",
@@ -445,26 +441,14 @@ TRANSLATES = {
         RU: "Выберите язык:",
         EN: "Select the language:",
     },
-    YOUR_LANG_CHANGED: {
+    LANG_CHANGED: {
         UK: "✅ Мову змінено на {} Слава Україні!",
-        RU: "✅ Язык изменен на {}",
-        EN: "✅ Language changed to {}",
+        RU: "✅ Язык изменен на {} Слава Україні!",
+        EN: "✅ Language changed to {} Glory to Ukraine!",
     },
-    CANCEL_THIS: {
+    CANCEL: {
         UK: "Скасувати",
         RU: "Отмена",
         EN: "Cancel",
     },
 }
-
-
-def gettext(msg_key, lang, *args, **kwargs):
-    if msg_key not in TRANSLATES:
-        raise ValueError(f"Not found translate for {msg_key}!")
-    message = TRANSLATES[msg_key].get(lang)
-    if message is None:
-        message = TRANSLATES[msg_key].get(DEFAULT)
-    if message is None:
-        raise ValueError(f"Not found translate for default {msg_key}!")
-
-    return message.format(*args, **kwargs)

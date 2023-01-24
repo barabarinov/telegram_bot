@@ -1,13 +1,13 @@
-import logging
 from telegram import Update
 from telegram.ext import CallbackContext
 
 from app.db import Session
+from app.message import (
+    Message,
+    escape,
+)
 from app.models import User, GroupPurchase, GroupIncome
-from app.handlers.find_user_lang_or_id import find_user_lang
-from app.buttons import reply_keyboard_main_menu
 from app.translate import (
-    gettext as _,
     REGISTERED,
     INCOGNITO,
     ALREADY_REGISTERED,
@@ -17,20 +17,26 @@ from app.translate import (
     BILLS,
     MISCELLANEOUS,
     SALARY,
+    CREATE_NEW_EXPENSE,
+    CREATE_NEW_INCOME,
+    CREATE_EXPENSE_CATEGORY,
+    CREATE_INCOME_CATEGORY,
+    ALL_EXPENSES,
+    ALL_INCOMES,
+    LAST_MONTH,
+    LANGUAGE_NAME,
 )
 
-DEFAULT_USER_EXPENSES_CATEGORIES = [
+DEFAULT_EXPENSES_CATEGORIES = [
     GROCERIES,
     TRANSPORT,
     BILLS,
     MISCELLANEOUS,
 ]
 
-DEFAULT_USER_INCOME_CATEGORIES = [
+DEFAULT_INCOME_CATEGORIES = [
     SALARY,
 ]
-
-logger = logging.getLogger(__name__)
 
 
 def register_user_handler(update: Update, context: CallbackContext):
@@ -48,44 +54,42 @@ def register_user_handler(update: Update, context: CallbackContext):
                 lang=update.effective_user.language_code,
             )
             session.add(user)
-
-            context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=_(REGISTERED, user.lang, user.username)
-                if update.effective_user.username is not None
-                else _(REGISTERED, user.lang, _(INCOGNITO, user.lang)),
-                reply_markup=reply_keyboard_main_menu(update, context, user.lang),
+            message = Message(update=update, context=context, language=user.lang)
+            message.add(REGISTERED, user.username or INCOGNITO, formatters=[escape])
+            message.add_reply_buttons(
+                [CREATE_NEW_EXPENSE, CREATE_NEW_INCOME],
+                [CREATE_EXPENSE_CATEGORY, CREATE_INCOME_CATEGORY],
+                [ALL_EXPENSES, ALL_INCOMES],
+                [LAST_MONTH],
+                [LANGUAGE_NAME],
+                resize_keyboard=True,
             )
+            message.send_message(user)
 
-            for name in DEFAULT_USER_EXPENSES_CATEGORIES:
-                user_new_expense_category = GroupPurchase(
+            for name in DEFAULT_EXPENSES_CATEGORIES:
+                new_expense_category = GroupPurchase(
                     user_id=update.effective_user.id,
-                    name=_(name, user.lang),
+                    name=message.translate(name),
                 )
-                session.add(user_new_expense_category)
+                session.add(new_expense_category)
 
-            for name in DEFAULT_USER_INCOME_CATEGORIES:
-                user_new_income_group = GroupIncome(
+            for name in DEFAULT_INCOME_CATEGORIES:
+                new_income_category = GroupIncome(
                     user_id=update.effective_user.id,
-                    name=_(name, user.lang),
+                    name=message.translate(name),
                 )
-                session.add(user_new_income_group)
+                session.add(new_income_category)
             session.commit()
-
         else:
-            context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text=(
-                    _(
-                        ALREADY_REGISTERED,
-                        find_user_lang(update),
-                        update.effective_user.username
-                        if update.effective_user.username is not None
-                        else _(INCOGNITO, find_user_lang(update)),
-                    )
-                    + _(STOP_IT, find_user_lang(update))
-                ),
-                reply_markup=reply_keyboard_main_menu(
-                    update, context, find_user_lang(update)
-                ),
+            message = Message(update=update, context=context, language=existing_user.lang)
+            message.add(ALREADY_REGISTERED, existing_user.username or INCOGNITO, formatters=[escape])
+            message.add(STOP_IT, formatters=[escape])
+            message.add_reply_buttons(
+                [CREATE_NEW_EXPENSE, CREATE_NEW_INCOME],
+                [CREATE_EXPENSE_CATEGORY, CREATE_INCOME_CATEGORY],
+                [ALL_EXPENSES, ALL_INCOMES],
+                [LAST_MONTH],
+                [LANGUAGE_NAME],
+                resize_keyboard=True,
             )
+            message.send_message(existing_user)

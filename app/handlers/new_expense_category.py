@@ -1,28 +1,25 @@
-import logging
 from enum import auto, IntEnum
 
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, ParseMode
+from telegram import Update
 from telegram.ext import CallbackContext, MessageHandler, Filters, CallbackQueryHandler
 from telegram.ext import ConversationHandler
 
 from app.db import Session
-from app.buttons import reply_keyboard_cancel
-from app.handlers.find_user_lang_or_id import find_user_lang
+from app.handlers.get_user import get_effective_user
+from app.message import (
+    Message,
+    escape,
+)
 from app.models import GroupPurchase
-from app.handlers.expenses import CANCEL
 from app.translate import (
-    gettext as _,
-    YES,
-    NO,
     NAME_EXPENSE_CATEGORY,
     IS_CORRECT,
+    YES,
+    NO,
     CATEGORY_CREATED,
     SEEYA,
+    CANCEL,
 )
-
-logger = logging.getLogger(__name__)
-
-CALLBACK_YES = "yes"
 
 
 class NewExpenseCategory(IntEnum):
@@ -30,71 +27,53 @@ class NewExpenseCategory(IntEnum):
     CONFIRM = auto()
 
 
-def new_expense_category(update: Update, context: CallbackContext):
-    update.message.reply_text(
-        text=_(NAME_EXPENSE_CATEGORY, find_user_lang(update)),
-        reply_markup=reply_keyboard_cancel(update, context, CANCEL),
-    )
+def new_expense_category(update: Update, context: CallbackContext) -> NewExpenseCategory:
+    with Session() as session:
+        user = get_effective_user(update, session)
+        context.user_data["user_lang"] = user.lang
+
+        message = Message(update=update, language=user.lang)
+        button = message.add(NAME_EXPENSE_CATEGORY, formatters=[escape]).create_inline_button(text=CANCEL)
+        message.add_inline_buttons([button])
+        message.reply()
 
     return NewExpenseCategory.NAME
 
 
-def get_new_expense_category_name(update: Update, context: CallbackContext):
+def get_new_expense_category_name(update: Update, context: CallbackContext) -> NewExpenseCategory:
     context.user_data["name"] = update.message.text
 
-    reply_keyboard = [
-        [
-            InlineKeyboardButton(
-                _(YES, find_user_lang(update)), callback_data=CALLBACK_YES
-            ),
-            InlineKeyboardButton(_(NO, find_user_lang(update)), callback_data=CANCEL),
-        ]
-    ]
-    reply_keyboard_yes_or_no = InlineKeyboardMarkup(reply_keyboard)
-
-    update.effective_message.reply_text(
-        text=_(IS_CORRECT, find_user_lang(update), context.user_data["name"]),
-        reply_markup=reply_keyboard_yes_or_no,
-        parse_mode=ParseMode.MARKDOWN,
-    )
+    message = Message(update=update, language=context.user_data["user_lang"])
+    message.add(IS_CORRECT, context.user_data["name"], formatters=[escape])
+    yes = message.create_inline_button(text=YES)
+    no = message.create_inline_button(text=NO, callback_id=CANCEL)
+    message.add_inline_buttons([yes, no])
+    message.reply()
 
     return NewExpenseCategory.CONFIRM
 
 
 def create_expense_category(update: Update, context: CallbackContext):
     with Session() as session:
-        user_new_expense_category = GroupPurchase(
+        new_expense_category = GroupPurchase(
             user_id=update.effective_user.id,
             name=context.user_data["name"],
         )
-        session.add(user_new_expense_category)
+        session.add(new_expense_category)
         session.commit()
-        session.refresh(user_new_expense_category)
 
-    query = update.callback_query
-    query.answer()
-
-    context.bot.edit_message_text(
-        chat_id=query.message.chat_id,
-        message_id=query.message.message_id,
-        text=_(
-            CATEGORY_CREATED, find_user_lang(update), user_new_expense_category.name
-        ),
-        parse_mode=ParseMode.MARKDOWN,
-    )
+        message = Message(update=update, context=context, language=context.user_data["user_lang"])
+        message.add(CATEGORY_CREATED, new_expense_category.name, formatters=[escape])
+        message.edit_message_text()
 
     return ConversationHandler.END
 
 
 def cancel_expense_creation_category(update: Update, context: CallbackContext):
-    query = update.callback_query
-    query.answer()
+    message = Message(update=update, context=context, language=context.user_data["user_lang"])
+    message.add(SEEYA, formatters=[escape])
+    message.edit_message_text()
 
-    context.bot.edit_message_text(
-        chat_id=query.message.chat_id,
-        message_id=query.message.message_id,
-        text=_(SEEYA, find_user_lang(update)),
-    )
     return ConversationHandler.END
 
 
@@ -102,7 +81,7 @@ new_expense_category_conversation_handler = ConversationHandler(
     entry_points=[
         MessageHandler(
             Filters.regex(
-                "(Create new expense category|Створити категорію витрат|Создать категорию расходов)"
+                "^Create new expense category|Створити категорію витрат|Создать категорию расходов$"
             )
             & ~Filters.command,
             new_expense_category,
@@ -115,7 +94,7 @@ new_expense_category_conversation_handler = ConversationHandler(
             )
         ],
         NewExpenseCategory.CONFIRM: [
-            CallbackQueryHandler(create_expense_category, pattern=CALLBACK_YES),
+            CallbackQueryHandler(create_expense_category, pattern=YES),
         ],
     },
     fallbacks=[

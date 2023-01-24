@@ -1,20 +1,25 @@
-import logging
-
-from telegram import Update, ParseMode
+from telegram import Update
 from telegram.ext import CallbackContext, ConversationHandler, MessageHandler
 from telegram.ext import Filters, CallbackQueryHandler
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-from app.db import Session
-from app.models import User
-from app.handlers.find_user_lang_or_id import find_user_lang
-from app.buttons import reply_keyboard_main_menu
-from app.translate import (
-    gettext as _,
-    CHANGE_LANG,
-    YOUR_LANG_CHANGED,
-)
 
-logger = logging.getLogger(__name__)
+from app.db import Session
+from app.handlers.get_user import get_effective_user
+from app.message import (
+    Message,
+    escape,
+)
+from app.translate import (
+    CHANGE_LANG,
+    LANG_CHANGED,
+    CREATE_NEW_EXPENSE,
+    CREATE_NEW_INCOME,
+    CREATE_EXPENSE_CATEGORY,
+    CREATE_INCOME_CATEGORY,
+    ALL_EXPENSES,
+    ALL_INCOMES,
+    LAST_MONTH,
+    LANGUAGE_NAME,
+)
 
 ENGLISH = "en"
 UKRAINIAN = "uk"
@@ -24,37 +29,34 @@ FLAGS = {"uk": "🇺🇦", "en": "🇬🇧", "ru": "🏳️"}
 
 
 def change_language_button(update: Update, context: CallbackContext):
-    reply_keyboard_lang = [
-        [
-            InlineKeyboardButton("🇺🇦 UA", callback_data=UKRAINIAN),
-            InlineKeyboardButton("🇬🇧 EN", callback_data=ENGLISH),
-            InlineKeyboardButton("🏳️ RU", callback_data=RUSSIAN),
-        ]
-    ]
-    reply_keyboard_language = InlineKeyboardMarkup(reply_keyboard_lang)
-
-    update.message.reply_text(
-        text=(_(CHANGE_LANG, find_user_lang(update))),
-        reply_markup=reply_keyboard_language,
-        parse_mode=ParseMode.MARKDOWN,
-    )
+    message = Message(update=update)
+    message.add(CHANGE_LANG, formatters=[escape])
+    ukrainian = message.create_inline_button(text="🇺🇦 UA", callback_id=UKRAINIAN)
+    english = message.create_inline_button(text="🇬🇧 EN", callback_id=ENGLISH)
+    russian = message.create_inline_button(text="🏳️ RU", callback_id=RUSSIAN)
+    message.add_inline_buttons([ukrainian, english, russian])
+    message.reply()
 
     return 1
 
 
-def change_to_eng_uk_or_ru(update: Update, context: CallbackContext):
+def change_lang(update: Update, context: CallbackContext):
     with Session() as session:
-        user = session.query(User).get(update.effective_user.id)
-        query = update.callback_query
-        user.lang = query.data
+        user = get_effective_user(update, session)
+        user.lang = update.callback_query.data
         session.commit()
-        query.answer()
 
-        context.bot.send_message(
-            chat_id=query.message.chat_id,
-            text=_(YOUR_LANG_CHANGED, user.lang, FLAGS[query.data]),
-            reply_markup=reply_keyboard_main_menu(update, context, user.lang),
+        message = Message(update=update, context=context, language=user.lang)
+        message.add(LANG_CHANGED, FLAGS[user.lang], formatters=[escape])
+        message.add_reply_buttons(
+            [CREATE_NEW_EXPENSE, CREATE_NEW_INCOME],
+            [CREATE_EXPENSE_CATEGORY, CREATE_INCOME_CATEGORY],
+            [ALL_EXPENSES, ALL_INCOMES],
+            [LAST_MONTH],
+            [LANGUAGE_NAME],
+            resize_keyboard=True,
         )
+        message.send_message(user)
 
     return ConversationHandler.END
 
@@ -62,14 +64,11 @@ def change_to_eng_uk_or_ru(update: Update, context: CallbackContext):
 change_language_handler = ConversationHandler(
     entry_points=[
         MessageHandler(
-            Filters.regex("^🇬🇧 Language|🏳️ Язык|🇺🇦 Мова$") & ~Filters.command,
-            change_language_button,
+            Filters.regex("^🇬🇧 Language|🏳️ Язык|🇺🇦 Мова$") & ~Filters.command, change_language_button,
         )
     ],
     states={
-        1: [
-            CallbackQueryHandler(change_to_eng_uk_or_ru, pattern=LANGUAGE),
-        ],
+        1: [CallbackQueryHandler(change_lang, pattern=LANGUAGE)],
     },
     fallbacks=[],
 )
