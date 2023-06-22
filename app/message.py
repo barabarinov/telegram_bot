@@ -54,16 +54,17 @@ class Message:
 
         return self
 
-    def add_title(self, title: str, *args: Any, formatters: Optional[FORMATTERS] = None, **kwargs: Any) -> Self:
-        return self.add_line(title, *args, formatters=[bold] + (formatters or []), **kwargs)
-
     def add_line(self, message: str, *args: Any, formatters: Optional[FORMATTERS] = None, **kwargs: Any) -> Self:
         return self.add(message, *args, formatters=formatters, **kwargs).add_newline()
+
+    def add_title(self, title: str, *args: Any, formatters: Optional[FORMATTERS] = None, **kwargs: Any) -> Self:
+        return self.add_line(title, *args, formatters=[bold] + (formatters or []), **kwargs)
 
     def add_newline(self) -> Self:
         return self.add("\n")
 
-    def create_inline_button(self, text: str, callback_id: Optional[str] = None,
+    def create_inline_button(self, text: str,
+                             callback_id: Optional[str] = None,
                              is_translate: bool = True) -> InlineKeyboardButton:
         return InlineKeyboardButton(
             text=self.translate(text) if is_translate else text,

@@ -6,9 +6,9 @@ from typing import Tuple
 from telegram.ext import CallbackContext
 
 from app.db import Session
-from app.message import Message
 from app.handlers.reports.report_expenses_categories import build_expense_report_message
 from app.handlers.reports.report_income_categories import build_income_report_message
+from app.message import Message
 from app.models import User
 from app.translate import (
     MONTHLY_INCOME_TITLE,
@@ -45,7 +45,6 @@ def get_title(message: Message, last_month: int, title: str) -> Message:
         11: NOVEMBER,
         0: DECEMBER,
     }
-
     message.add_title(title, month_list[last_month]).add_newline()
 
     return message
@@ -53,28 +52,14 @@ def get_title(message: Message, last_month: int, title: str) -> Message:
 
 def get_previous_month_borders() -> Tuple[datetime.datetime, datetime.datetime, int]:
     now = datetime.datetime.now()
-
     if now.month == 1:
-        start = datetime.datetime(
-            now.year - 1, month=12, day=1, hour=0, minute=0, second=0
-        )
-        end = datetime.datetime(
-            now.year - 1, month=12, day=31, hour=23, minute=59, second=59
-        )
+        start = datetime.datetime(now.year - 1, month=12, day=1, hour=0, minute=0, second=0)
+        end = datetime.datetime(now.year - 1, month=12, day=31, hour=23, minute=59, second=59)
         return start, end, now.month - 1
 
-    thing, days_in_previous_month = monthrange(now.year, now.month - 1)
-    start = datetime.datetime(
-        now.year, now.month - 1, day=1, hour=0, minute=0, second=0
-    )
-    end = datetime.datetime(
-        now.year,
-        now.month - 1,
-        day=days_in_previous_month,
-        hour=23,
-        minute=59,
-        second=59,
-    )
+    _, days_in_previous_month = monthrange(now.year, now.month - 1)
+    start = datetime.datetime(now.year, now.month - 1, day=1, hour=0, minute=0, second=0)
+    end = datetime.datetime(now.year, now.month - 1, day=days_in_previous_month, hour=23, minute=59, second=59)
 
     return start, end, now.month - 1
 
@@ -82,6 +67,7 @@ def get_previous_month_borders() -> Tuple[datetime.datetime, datetime.datetime, 
 def job_monthly_feedback(context: CallbackContext):
     with Session() as session:
         start, end, last_month = get_previous_month_borders()
+
         for user in session.query(User).filter(User.enable_monthly_report == True):
             expense_message = Message(context=context, language=user.lang)
             expense_message = get_title(expense_message, last_month, MONTHLY_EXPENSES_TITLE)

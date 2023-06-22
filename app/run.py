@@ -118,8 +118,8 @@ def run(token, port):
     )
     j.run_monthly(
         job_monthly_feedback,
-        datetime.time(hour=10, minute=0, tzinfo=pytz.timezone(EUROPEKIEV)),
-        1,
+        datetime.time(hour=14, minute=42, tzinfo=pytz.timezone(EUROPEKIEV)),
+        30,
     )
     if IS_HEROKU:
         updater.start_webhook(
